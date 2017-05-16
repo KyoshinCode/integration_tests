@@ -67,7 +67,7 @@ public class UserRepositoryTest {
     public void shouldFindUserByUsername() throws Exception {
         repository.save(user);
 
-        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "", "");
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "wrong", "wrong");
 
         assertUserInList(found, user);
     }
@@ -76,7 +76,7 @@ public class UserRepositoryTest {
     public void shouldFindByEmail() throws Exception {
         repository.save(user);
 
-        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "john@domain.com", "");
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong", "wrong", "john@domain.com");
 
         assertUserInList(found, user);
     }
