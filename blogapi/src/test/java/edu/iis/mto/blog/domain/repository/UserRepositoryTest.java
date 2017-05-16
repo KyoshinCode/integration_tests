@@ -57,5 +57,13 @@ public class UserRepositoryTest {
         User persistedUser = repository.save(user);
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
+    
+    @Test
+    public void shouldFindExistingUser(){
+    	entityManager.persist(user);
+
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(user.getFirstName(), "", user.getEmail());
+    	Assert.assertTrue(foundUsers.contains(user));
+    }
 
 }
