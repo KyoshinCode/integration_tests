@@ -24,14 +24,22 @@ public class UserRepositoryTest {
     @Autowired
     private UserRepository repository;
 
-    private User user;
+    private User user1;
+    private User user2;
 
     @Before
     public void setUp() {
-        user = new User();
-        user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
-        user.setAccountStatus(AccountStatus.NEW);
+        user1 = new User();
+        user1.setFirstName("Jan");
+        user1.setLastName("Kowalski");
+        user1.setEmail("john@domain.com");
+        user1.setAccountStatus(AccountStatus.NEW);
+
+        user2 = new User();
+        user2.setFirstName("Wojciech");
+        user2.setLastName("Szczepaniak");
+        user2.setEmail("wojtek@o2.pl");
+        user2.setAccountStatus(AccountStatus.NEW);
     }
 
     @Test
@@ -44,7 +52,7 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
-        User persistedUser = entityManager.persist(user);
+        User persistedUser = entityManager.persist(user1);
         List<User> users = repository.findAll();
 
         Assert.assertThat(users, Matchers.hasSize(1));
@@ -54,9 +62,18 @@ public class UserRepositoryTest {
     @Test
     public void shouldStoreANewUser() {
 
-        User persistedUser = repository.save(user);
+        User persistedUser = repository.save(user1);
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void findExistedUserByLastName() {
+        User persistedUser = entityManager.persist(user1);
+        entityManager.persist(user2);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("*", "Kowalski", "*");
+
+        Assert.assertThat(users, Matchers.hasSize(1));
+        Assert.assertThat(users.get(0), Matchers.equalTo(persistedUser));
+    }
 }
