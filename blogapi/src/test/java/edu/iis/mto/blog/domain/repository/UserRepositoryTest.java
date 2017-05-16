@@ -16,6 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.User;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserRepositoryTest {
@@ -52,7 +54,7 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(1));
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
-    
+
     @Test
     public void shouldStoreANewUser() {
 
@@ -61,4 +63,21 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldFindUserByUsername() throws Exception {
+        repository.save(user);
+
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "", "");
+
+        assertThat(found).isNotEmpty();
+        checkSameUser(found.get(0), user);
+    }
+
+    private void checkSameUser(User first, User second) {
+        assertThat(first.getAccountStatus()).isEqualTo(second.getAccountStatus());
+        assertThat(first.getFirstName()).isEqualTo(second.getFirstName());
+        assertThat(first.getLastName()).isEqualTo(second.getLastName());
+        assertThat(first.getEmail()).isEqualTo(second.getEmail());
+        assertThat(first.getId()).isEqualTo(second.getId());
+    }
 }
