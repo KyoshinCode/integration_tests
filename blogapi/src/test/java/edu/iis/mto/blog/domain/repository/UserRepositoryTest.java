@@ -5,7 +5,6 @@ import java.util.List;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,23 +30,21 @@ public class UserRepositoryTest {
     @Before
     public void setUp() {
         user = new User();
-        user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
+        user.setFirstName("Matt");
+        user.setEmail("matt@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
 
-    @Ignore
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
-
+    	repository.deleteAll();
         List<User> users = repository.findAll();
-
         Assert.assertThat(users, Matchers.hasSize(0));
     }
 
-    @Ignore
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
+    	repository.deleteAll();
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
@@ -55,7 +52,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
-    @Ignore
     @Test
     public void shouldStoreANewUser() {
 
@@ -63,5 +59,43 @@ public class UserRepositoryTest {
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
-
+    
+    @Test
+    public void findByFullFirstName() {
+    	repository.deleteAll();
+    	User persistedUser = entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Matt", "", "");
+    	Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsers.get(0).getFirstName()));
+    }
+    
+    @Test
+    public void findByFullEmail() {
+    	repository.deleteAll();
+    	User persistedUser = entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "", "matt@domain.com");
+    	Assert.assertThat(persistedUser.getEmail(), Matchers.containsString(foundUsers.get(0).getEmail()));
+    }
+    
+    @Test
+    public void findByPartialFirstName() {
+    	repository.deleteAll();
+    	User persistedUser = entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Ma", "", "");
+    	Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsers.get(0).getFirstName()));
+    }
+    
+    @Test
+    public void findByPartialEmail() {
+    	repository.deleteAll();
+    	User persistedUser = entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "", "@domain.com");
+    	Assert.assertThat(persistedUser.getEmail(), Matchers.containsString(foundUsers.get(0).getEmail()));
+    }
+    
+    @Test
+    public void shouldNotFindUser() {
+    	repository.deleteAll();
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "", "testtest@domain.com");
+    	Assert.assertThat(foundUsers, Matchers.hasSize(0));
+    }
 }
