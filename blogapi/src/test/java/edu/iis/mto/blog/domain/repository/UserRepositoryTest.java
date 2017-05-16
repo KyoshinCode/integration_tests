@@ -31,7 +31,7 @@ public class UserRepositoryTest {
     @Before
     public void setUp() {
         user = new User();
-        user.setFirstName("John");
+        user.setFirstName("Konrad");
         user.setEmail("konrad@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -58,6 +58,30 @@ public class UserRepositoryTest {
     public void shouldStoreANewUser() {
         User persistedUser = repository.save(user);
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
+    }
+    
+    @Test
+    public void shouldFindUserByName() {
+    	User persistedUser = entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Konrad", "Wisniowiecki","asdf@domain.com");
+    	
+    	Assert.assertThat(foundUsers, Matchers.hasSize(1));
+    }
+    
+    @Test
+    public void shouldFindUserByEmail() {
+    	User persistedUser = entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Ambrozy", "Wisniowiecki","konrad@domain.com");
+    	
+    	Assert.assertThat(foundUsers, Matchers.hasSize(1));
+    }
+    
+    @Test
+    public void shouldNotFindUser() {
+    	User persistedUser = entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Kordelas", "Wisniowiecki","asdf@domain.com");
+    	
+    	Assert.assertThat(foundUsers, Matchers.hasSize(0));
     }
 
 }
