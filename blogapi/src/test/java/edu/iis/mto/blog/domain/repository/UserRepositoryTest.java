@@ -69,8 +69,21 @@ public class UserRepositoryTest {
 
         List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "", "");
 
-        assertThat(found).isNotEmpty();
-        checkSameUser(found.get(0), user);
+        assertUserInList(found, user);
+    }
+
+    @Test
+    public void shouldFindByEmail() throws Exception {
+        repository.save(user);
+
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "john@domain.com", "");
+
+        assertUserInList(found, user);
+    }
+
+    private void assertUserInList(List<User> users, User user) {
+        assertThat(users).isNotEmpty();
+        checkSameUser(users.get(0), user);
     }
 
     private void checkSameUser(User first, User second) {
