@@ -32,7 +32,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
+        user.setEmail("john2@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
 
@@ -46,6 +46,7 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
+		repository.deleteAll();
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
@@ -53,7 +54,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
-    @Ignore
     @Test
     public void shouldStoreANewUser() {
 
