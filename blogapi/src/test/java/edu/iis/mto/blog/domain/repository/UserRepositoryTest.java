@@ -36,13 +36,12 @@ public class UserRepositoryTest {
         user.setAccountStatus(AccountStatus.NEW);
     }
 
-    @Ignore
     @Test
-    public void shouldFindNoUsersIfRepositoryIsEmpty() {
+    public void shouldFindOneUsersIfRepositoryIsEmpty() {
 
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(0));
+        Assert.assertThat(users, Matchers.hasSize(1));
     }
 
     @Ignore
