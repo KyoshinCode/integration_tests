@@ -81,6 +81,15 @@ public class UserRepositoryTest {
         assertUserInList(found, user);
     }
 
+    @Test
+    public void shouldNotFindUserWithInvalidData() throws Exception {
+        repository.save(user);
+
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong", "wrong", "wrong");
+
+        assertThat(found).isEmpty();
+    }
+
     private void assertUserInList(List<User> users, User user) {
         assertThat(users).isNotEmpty();
         checkSameUser(users.get(0), user);
