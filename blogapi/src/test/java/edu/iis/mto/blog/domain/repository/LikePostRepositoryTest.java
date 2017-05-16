@@ -57,6 +57,7 @@ public class LikePostRepositoryTest {
     	List<BlogPost> foundBlogPosts = blogPostRepository.findAll();
     	List<User> foundUsers = userRepository.findAll();
     	List<LikePost> foundLikePosts = repository.findAll();
-    	Optional<LikePost> likePost = repository.findByUserAndPost(user, blogPost);
+    	Optional<LikePost> likePost = repository.findByUserAndPost(foundUsers.get(0), foundBlogPosts.get(0));
+    	Assert.assertThat(likePost.get().getUser(), Matchers.equalTo(foundUsers.get(0)));
     }
 }
