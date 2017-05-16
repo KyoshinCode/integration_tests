@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import edu.iis.mto.blog.domain.BlogManager;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
@@ -20,8 +19,6 @@ import edu.iis.mto.blog.domain.model.User;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class LikePostRepositoryTest {
-	
-    private BlogManager entityManager;
 
     @Autowired
     private LikePostRepository repository;
@@ -31,10 +28,6 @@ public class LikePostRepositoryTest {
     
     @Autowired
     private BlogPostRepository blogPostRepository;
-
-    private LikePost likePost;
-    private User user;
-    private BlogPost blogPost;
     
     @Test
     public void postEntityCreatesCorrectly() {
@@ -56,7 +49,6 @@ public class LikePostRepositoryTest {
     public void findByUserAndPostWorksCorrectly() {
     	List<BlogPost> foundBlogPosts = blogPostRepository.findAll();
     	List<User> foundUsers = userRepository.findAll();
-    	List<LikePost> foundLikePosts = repository.findAll();
     	Optional<LikePost> likePost = repository.findByUserAndPost(foundUsers.get(0), foundBlogPosts.get(0));
     	Assert.assertThat(likePost.get().getUser(), Matchers.equalTo(foundUsers.get(0)));
     }
