@@ -1,9 +1,11 @@
 package edu.iis.mto.blog.domain.repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +26,14 @@ public class LikeRepositoryTest {
     private TestEntityManager entityManager;
 
     @Autowired
-    private UserRepository repository;
+    private LikePostRepository repository;
 
+    @Autowired
+    private BlogPostRepository blogPostRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
     private User user;
     private BlogPost blogPost;
     private LikePost likePost;
@@ -38,20 +46,46 @@ public class LikeRepositoryTest {
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
         
-        likePost = new LikePost();
-        likePost.setUser(user);
-        likePost.setId(1L);
-        
         blogPost = new BlogPost();
+        List<LikePost> likes = new ArrayList<>();
+        likes.add(likePost);
         blogPost.setUser(user);
         blogPost.setEntry("Post");
-        blogPost.setId(1L);
-        blogPost.setLikes(likePost);
+        blogPost.setLikes(likes);
+        
+        likePost = new LikePost();
+        likePost.setUser(user);
+        likePost.setPost(blogPost);
 	}
 
 	@Test
-	public void test() {
-		
-	}
+    public void shouldFindNoLikesIfRepositoryIsEmpty() {
+
+        List<LikePost> likes = repository.findAll();
+
+        Assert.assertThat(likes, Matchers.hasSize(0));
+    }
+	
+	@Test
+    public void shouldFindOneLikePostIfRepositoryContainsOneLikePostEntity() {
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		LikePost persistedLikePost = entityManager.persist(likePost);
+        List<LikePost> likes = repository.findAll();
+
+        Assert.assertThat(likes, Matchers.hasSize(1));
+        Assert.assertThat(likes.get(0).getPost(), Matchers.equalTo(persistedLikePost.getPost()));
+    }
+
+	@Test
+    public void shouldStoreANewLikePost() {
+
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		LikePost persistedLikePost = repository.save(likePost);
+
+        Assert.assertThat(persistedLikePost.getId(), Matchers.notNullValue());
+    }
+    
 
 }
