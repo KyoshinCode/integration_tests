@@ -21,7 +21,7 @@ import edu.iis.mto.blog.domain.model.User;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
-public class LikeRepositoryTest {
+public class LikePostRepositoryTest {
 
 	@Autowired
     private TestEntityManager entityManager;
@@ -134,6 +134,33 @@ public class LikeRepositoryTest {
         blogPostRepository.save(differentBlogPost);
 		
 		Optional<LikePost> likes = repository.findByUserAndPost(user, differentBlogPost);
+		
+		Assert.assertThat(likes.isPresent(), Matchers.equalTo(false));
+	}
+	
+	@Test
+	public void shouldNotFindLikesIfBothUserAndBlogPostAreDifferent() {
+		
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		repository.save(likePost);
+		
+		
+		User differentUser = new User();
+		differentUser.setFirstName("Janusz");
+		differentUser.setLastName("Kowalski");
+		differentUser.setEmail("kowalski@domain.com");
+		differentUser.setAccountStatus(AccountStatus.NEW);
+		userRepository.save(differentUser);
+		
+		BlogPost differentBlogPost = new BlogPost();
+        List<LikePost> list = new ArrayList<>();
+        differentBlogPost.setUser(user);
+        differentBlogPost.setEntry("Different post");
+        differentBlogPost.setLikes(list);
+        blogPostRepository.save(differentBlogPost);
+		
+		Optional<LikePost> likes = repository.findByUserAndPost(differentUser, differentBlogPost);
 		
 		Assert.assertThat(likes.isPresent(), Matchers.equalTo(false));
 	}
