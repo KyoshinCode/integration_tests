@@ -118,5 +118,24 @@ public class LikeRepositoryTest {
 		
 		Assert.assertThat(likes.isPresent(), Matchers.equalTo(false));
 	}
+	
+	@Test
+	public void shouldNotFindLikesIfBlogPostIsDifferent() {
+		
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		repository.save(likePost);
+		
+		BlogPost differentBlogPost = new BlogPost();
+        List<LikePost> list = new ArrayList<>();
+        differentBlogPost.setUser(user);
+        differentBlogPost.setEntry("Different post");
+        differentBlogPost.setLikes(list);
+        blogPostRepository.save(differentBlogPost);
+		
+		Optional<LikePost> likes = repository.findByUserAndPost(user, differentBlogPost);
+		
+		Assert.assertThat(likes.isPresent(), Matchers.equalTo(false));
+	}
 
 }
