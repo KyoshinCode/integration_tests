@@ -70,4 +70,14 @@ public class LikePostRepositoryTest
         
         Assert.assertThat(likePosts.get(0).getPost().getEntry(), Matchers.equalTo(post.getEntry()));
 	}
+	
+	@Test
+	public void shouldFindLikePostWithChangedUser() {
+		List<LikePost> likePosts = likePostRepository.findAll();
+        likePosts.get(0).setUser(user);
+        likePostRepository.save(likePosts.get(0));
+        likePosts = likePostRepository.findAll();
+        
+        Assert.assertThat(likePosts.get(0).getUser().getId(), Matchers.equalTo(user.getId()));
+	}
 }
