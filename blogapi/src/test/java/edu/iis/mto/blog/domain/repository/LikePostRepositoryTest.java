@@ -12,6 +12,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
+import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
 
@@ -32,6 +33,8 @@ public class LikePostRepositoryTest
 	
 	private LikePost likePost;
 
+	private BlogPost post;
+
     @Before
     public void setUp() {
         user = new User();
@@ -43,15 +46,28 @@ public class LikePostRepositoryTest
 		likePost = new LikePost();
         likePost.setUser(repository.findAll().get(0));
         likePost.setPost(blogPostRepository.findAll().get(0));
+        likePostRepository.save(likePost);
+        
+        post = new BlogPost();
+        post.setEntry("Second post");
+        post.setUser(user);
+        blogPostRepository.save(post);
 
     }
 	@Test
 	public void shouldFindOneLikePostIfRepositoryContainsOneLikePostEntity() {
-        likePostRepository.save(likePost);
         List<LikePost> likePosts = likePostRepository.findAll();
         
         Assert.assertThat(likePosts, Matchers.hasSize(1));
-        
 	}
-
+	
+	@Test
+	public void shouldFindLikePostWithChangedBlogPost() {
+        List<LikePost> likePosts = likePostRepository.findAll();
+        likePosts.get(0).setPost(post);
+        likePostRepository.save(likePosts.get(0));
+        likePosts = likePostRepository.findAll();
+        
+        Assert.assertThat(likePosts.get(0).getPost().getEntry(), Matchers.equalTo(post.getEntry()));
+	}
 }
