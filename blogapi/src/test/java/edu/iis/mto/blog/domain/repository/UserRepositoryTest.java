@@ -34,7 +34,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
+        user.setEmail("johnas@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
     @Ignore
@@ -53,7 +53,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(1));
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
-    @Ignore
     @Test
     public void shouldStoreANewUser() {
 
