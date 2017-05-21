@@ -90,4 +90,10 @@ public class UserRepositoryTest {
         
         Assert.assertThat(users, Matchers.hasSize(1));
     }
+    @Test
+    public void shouldFindAllUsersByPredicateInEmail() {
+		List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("*", "*", "domain");
+        
+        Assert.assertThat(users, Matchers.hasSize(3));
+    }
 }
