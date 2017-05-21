@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,20 @@ public class LikePostRepositoryTest {
     private User user;
     private BlogPost blogPost;
     
+    @Before
+    public void setUp() {
+        List<User> users = userRepository.findAll();
+        BlogPost blogPost = new BlogPost().setEntry("old entry").setUser(users.get(0));
+        blogPost.setId((long) 3);
+        blogPostRepository.save(blogPost);
+
+        List<BlogPost> blogPosts = blogPostRepository.findAll();
+
+        LikePost likePost = new LikePost().setPost(blogPosts.get(0)).setUser(users.get(0));        
+        likePost.setId(null);
+        likePostRepository.save(likePost);
+    }
+    
     @Test
     public void shouldCreateOnePost() {
     	List<LikePost> likePosts = likePostRepository.findAll();
@@ -58,6 +73,7 @@ public class LikePostRepositoryTest {
     public void shouldFindLikePostByUserAndPost() {
     	List<BlogPost> foundBlogPosts = blogPostRepository.findAll();
     	List<User> foundUsers = userRepository.findAll();
+    	//System.out.println("found users: " + foundUsers);
     	Optional<LikePost> likePost = likePostRepository.findByUserAndPost(foundUsers.get(0), foundBlogPosts.get(0));
     	List<LikePost> likePosts = likePostRepository.findAll();
     	Assert.assertThat(likePost.get(), Matchers.equalTo(likePosts.get(0)));

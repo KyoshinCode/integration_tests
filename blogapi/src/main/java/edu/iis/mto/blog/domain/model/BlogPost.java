@@ -32,20 +32,23 @@ public class BlogPost extends BaseEntity {
         return user;
     }
 
-    public void setUser(User user) {
+    public BlogPost setUser(User user) {
         this.user = user;
+        return this;
     }
 
     public String getEntry() {
         return entry;
     }
 
-    public void setEntry(String entry) {
+    public BlogPost setEntry(String entry) {
         this.entry = entry;
+        return this;
     }
 
-    public void setLikes(List<LikePost> likes) {
+    public BlogPost setLikes(List<LikePost> likes) {
         this.likes = likes;
+        return this;
     }
 
     public List<LikePost> getLikes() {
