@@ -2,7 +2,6 @@ package edu.iis.mto.blog.rest.test;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
 
 import org.apache.http.HttpStatus;
 import org.junit.Assert;

@@ -4,9 +4,7 @@ import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.Test;
-import org.hamcrest.Matchers.*;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
 import static org.hamcrest.Matchers.equalTo;
 
 import com.jayway.restassured.RestAssured;
