@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -81,5 +82,14 @@ public class LikePostRepositoryTest
         likePosts = likePostRepository.findAll();
         
         Assert.assertThat(likePosts.get(0).getUser().getId(), Matchers.equalTo(user.getId()));
+	}
+	@Test
+	public void shouldFindOneLikePostByUserAndPost() {
+		likePosts = likePostRepository.findAll();
+        likePosts.get(0).setPost(post);
+        likePosts.get(0).setUser(user);
+		Optional<LikePost> result = likePostRepository.findByUserAndPost(user, post);
+		
+		Assert.assertThat(result.isPresent(), Matchers.is(true));
 	}
 }
