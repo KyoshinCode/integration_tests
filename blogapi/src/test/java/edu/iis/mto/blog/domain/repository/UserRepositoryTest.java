@@ -84,4 +84,10 @@ public class UserRepositoryTest {
         
         Assert.assertThat(users, Matchers.hasSize(1));
     }
+    @Test
+    public void shouldFindOneUserByLastNamesMiddleLetter() {
+		List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("*", "v", "*");
+        
+        Assert.assertThat(users, Matchers.hasSize(1));
+    }
 }
