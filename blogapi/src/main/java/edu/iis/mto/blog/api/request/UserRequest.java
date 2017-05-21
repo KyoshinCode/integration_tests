@@ -21,24 +21,27 @@ public class UserRequest {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public UserRequest setFirstName(String firstName) {
         this.firstName = firstName;
+        return this;
     }
 
     public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public UserRequest setLastName(String lastName) {
         this.lastName = lastName;
+        return this;
     }
 
     public String getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public UserRequest setEmail(String email) {
         this.email = email;
+        return this;
     }
 
     @Override

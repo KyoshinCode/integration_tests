@@ -4,16 +4,28 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
+import static org.mockito.Matchers.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
-
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,7 +36,7 @@ import edu.iis.mto.blog.services.DataFinder;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BlogApi.class)
-public class BlogApiTest {
+public class BlogApiTest {	
 
     @Autowired
     private MockMvc mvc;
@@ -34,6 +46,9 @@ public class BlogApiTest {
 
     @MockBean
     private DataFinder finder;
+    
+    @Rule
+	public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void postBlogUserShouldResponseWithStatusCreatedAndNewUserId() throws Exception {
@@ -49,9 +64,31 @@ public class BlogApiTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isCreated())
                 .andExpect(content().string(writeJson(new Id(newUserId))));
     }
+    
+    @Test
+    public void shouldGenerateHTTPconflict409WhenDataIntegrityViolationException() throws Exception {
+        Long newUserId = 1L;
+        UserRequest user = new UserRequest().setEmail("john@domain.com").setFirstName("John").setLastName("Steward");
+        String content = writeJson(user);
+        Mockito.when(blogService.createUser(user)).thenThrow(new DataIntegrityViolationException("DataIntegrityViolationException"));
+
+        mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
+                .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isConflict());
+    }
+    
+    @Test
+    public void shouldGenerateHTTPnotFound409WhenGettingNonExistentUserData() throws Exception {
+    	expectedException.expect(HttpClientErrorException.class);
+    	RestTemplate restTemplate = new RestTemplate();
+        MockRestServiceServer mockServer = MockRestServiceServer.createServer(restTemplate);
+		mockServer.expect(requestTo("/blog/user/-8")).andExpect(method(HttpMethod.GET)).andRespond(withStatus(HttpStatus.NOT_FOUND));
+		restTemplate.getForObject("/blog/user/{id}", String.class, -8);
+		mockServer.verify();
+    }
+
 
     private String writeJson(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writer().writeValueAsString(obj);
-    }
+    }    
 
 }
