@@ -65,5 +65,11 @@ public class UserRepositoryTest {
         
         Assert.assertThat(users, Matchers.hasSize(2));
     }
+    @Test
+    public void shouldFindOneUserByFirstName() {
+		List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Adam", "*", "*");
+        
+        Assert.assertThat(users, Matchers.hasSize(1));
+    }
 
 }
