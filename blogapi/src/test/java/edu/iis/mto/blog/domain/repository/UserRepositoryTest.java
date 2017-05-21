@@ -30,6 +30,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -50,7 +51,7 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(1));
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
-    
+
     @Test
     public void shouldStoreANewUser() {
 
@@ -59,4 +60,59 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldNotFindUser() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("fakeUserName","fakeLastName","fake@mail.com");
+        Assert.assertThat(foundUsersList.isEmpty(), Matchers.is(true));
+    }
+
+    @Test
+    public void findByFirstName() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan","#","#");
+        Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsersList.get(0).getFirstName()));
+    }
+
+    @Test
+    public void findByFirstNameThatIsSimilar() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("an","#","#");
+        Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsersList.get(0).getFirstName()));
+    }
+
+    @Test
+    public void findByLastName() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("#","Kowalski","#");
+        Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsersList.get(0).getFirstName()));
+    }
+
+    @Test
+    public void findByLastNameThatIsSimilar() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("#","Kowa","#");
+        Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsersList.get(0).getFirstName()));
+    }
+
+    @Test
+    public void findByEmail() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("#","#","john@domain.com");
+        Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsersList.get(0).getFirstName()));
+    }
+
+    @Test
+    public void findByEmailThatIsSimilar() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("#","#","@domain.com");
+        Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsersList.get(0).getFirstName()));
+    }
+
+    @Test
+    public void findByFirstNameLastNameAndEmail() {
+        User persistedUser = entityManager.persist(user);
+        List<User> foundUsersList = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan","Kow","john@domain.com");
+        Assert.assertThat(persistedUser.getFirstName(), Matchers.containsString(foundUsersList.get(0).getFirstName()));
+    }
 }
