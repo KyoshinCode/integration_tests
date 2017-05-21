@@ -35,6 +35,8 @@ public class LikePostRepositoryTest
 
 	private BlogPost post;
 
+	private List<LikePost> likePosts;
+
     @Before
     public void setUp() {
         user = new User();
@@ -56,14 +58,14 @@ public class LikePostRepositoryTest
     }
 	@Test
 	public void shouldFindOneLikePostIfRepositoryContainsOneLikePostEntity() {
-        List<LikePost> likePosts = likePostRepository.findAll();
+        likePosts = likePostRepository.findAll();
         
         Assert.assertThat(likePosts, Matchers.hasSize(1));
 	}
 	
 	@Test
 	public void shouldFindLikePostWithChangedBlogPost() {
-        List<LikePost> likePosts = likePostRepository.findAll();
+        likePosts = likePostRepository.findAll();
         likePosts.get(0).setPost(post);
         likePostRepository.save(likePosts.get(0));
         likePosts = likePostRepository.findAll();
@@ -73,7 +75,7 @@ public class LikePostRepositoryTest
 	
 	@Test
 	public void shouldFindLikePostWithChangedUser() {
-		List<LikePost> likePosts = likePostRepository.findAll();
+		likePosts = likePostRepository.findAll();
         likePosts.get(0).setUser(user);
         likePostRepository.save(likePosts.get(0));
         likePosts = likePostRepository.findAll();
