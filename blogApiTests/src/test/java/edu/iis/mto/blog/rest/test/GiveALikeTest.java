@@ -29,4 +29,19 @@ public class GiveALikeTest extends FunctionalTests  {
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
                 .post("/blog/user/1/like/1");
     }
+
+    @Test
+    public void multipleLikesFromTheSameUserDoNotChangePostLikeCount() {
+        JSONObject jsonObj = new JSONObject();
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .post("/blog/user/2/like/1");
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .post("/blog/user/2/like/1");
+
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .get("/blog/user/1/post").print().contains("likesCount:" + "1");
+    }
 }
