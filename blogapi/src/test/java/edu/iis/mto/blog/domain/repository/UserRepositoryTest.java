@@ -88,4 +88,12 @@ public class UserRepositoryTest {
         List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("","","marc@");
         Assert.assertThat(persistesUser.getEmail(), Matchers.containsString(foundUsers.get(0).getEmail()));
     }
+
+    @Test
+    public void findByPartialFirstName(){
+        repository.deleteAll();
+        User persistesUser = entityManager.persist(user);
+        List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("rc","","");
+        Assert.assertThat(persistesUser.getFirstName(), Matchers.containsString(foundUsers.get(0).getFirstName()));
+    }
 }
