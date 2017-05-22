@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain;
 
 import edu.iis.mto.blog.api.request.PostRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.repository.BlogPostRepository;
 import org.hamcrest.Matchers;
@@ -23,8 +24,10 @@ import edu.iis.mto.blog.services.BlogService;
 
 import java.util.List;
 
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.not;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -80,5 +83,33 @@ public class BlogManagerTest {
 
         Assert.assertThat(users.get(1).getAccountStatus(), is((equalTo(AccountStatus.CONFIRMED))));
         Assert.assertThat(blogServiceSpy.addLikeToPost(users.get(1).getId(), blogPost.getId()), is(equalTo(true)));
+    }
+
+    @Test(expected = DomainError.class)
+    public void newUserCannotLikePost(){
+        blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
+        blogService.createUser(new UserRequest("Jan", "Kowalski", "kowalski@domain.com"));
+        ArgumentCaptor<User> userParam = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepository, Mockito.times(2)).save(userParam.capture());
+        List<User> users = userParam.getAllValues();
+        users.get(0).setId((long) 0);
+        users.get(1).setId((long) 1);
+        Mockito.verify(userRepository, Mockito.times(2)).save(userParam.capture());
+        users = userParam.getAllValues();
+
+        blogService.createPost(users.get(0).getId(), new PostRequest());
+        ArgumentCaptor<BlogPost> blogPostParam = ArgumentCaptor.forClass(BlogPost.class);
+        Mockito.verify(blogPostRepository).save(blogPostParam.capture());
+        BlogPost blogPost = blogPostParam.getValue();
+        blogPost.setId((long) 3);
+        blogPost.setUser(users.get(0));
+        Mockito.verify(blogPostRepository).save(blogPostParam.capture());
+        blogPost = blogPostParam.getValue();
+
+        BlogService blogServiceSpy = Mockito.spy(BlogService.class);
+        Mockito.when(blogServiceSpy.addLikeToPost(users.get(1).getId(), blogPost.getId())).thenThrow(new DomainError("ERROR!"));
+
+        Assert.assertThat(users.get(1).getAccountStatus(), is((not(equalTo(AccountStatus.CONFIRMED)))));
+        blogServiceSpy.addLikeToPost(users.get(1).getId(), blogPost.getId());
     }
 }
