@@ -68,7 +68,7 @@ public class LikePostRepositoryTest {
     }
 
     @Test
-    public void shouldModifyLikePost() {
+    public void shouldModifyLikePostsBlogPost() {
         LikePost persistedLikePost = repository.save(likePost);
         BlogPost blogPost2 = new BlogPost();
 
@@ -80,6 +80,24 @@ public class LikePostRepositoryTest {
 
         List<LikePost> likePosts = repository.findAll();
         Assert.assertThat(likePosts.get(0).getPost(), Matchers.equalTo(blogPost2));
+        Assert.assertThat(likePosts.get(0).getId(), Matchers.equalTo(persistedLikePost.getId()));
+    }
+    @Test
+    public void shouldModifyLikePostsUser() {
+        LikePost persistedLikePost = repository.save(likePost);
+        User user = new User();
+
+        user.setEmail("white@domain.com");
+        user.setFirstName("Soul");
+        user.setLastName("White");
+        user.setAccountStatus(AccountStatus.NEW);
+        entityManager.persist(user);
+
+        persistedLikePost.setUser(user);
+        repository.save(persistedLikePost);
+
+        List<LikePost> likePosts = repository.findAll();
+        Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(user));
         Assert.assertThat(likePosts.get(0).getId(), Matchers.equalTo(persistedLikePost.getId()));
     }
 }
