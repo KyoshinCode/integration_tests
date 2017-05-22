@@ -40,7 +40,7 @@ public class UserRepositoryTest {
 
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(0));
+        Assert.assertThat(users, Matchers.hasSize(1));
     }
 
     @Test
@@ -48,8 +48,8 @@ public class UserRepositoryTest {
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(1));
-        Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
+        Assert.assertThat(users, Matchers.hasSize(2));
+        Assert.assertThat(users.get(1).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
     @Test
