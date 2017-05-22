@@ -37,9 +37,7 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
-
         List<User> users = repository.findAll();
-
         Assert.assertThat(users, Matchers.hasSize(1));
     }
 
@@ -54,9 +52,7 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldStoreANewUser() {
-
         User persistedUser = repository.save(user);
-
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 

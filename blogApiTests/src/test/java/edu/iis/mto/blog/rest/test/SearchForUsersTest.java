@@ -14,12 +14,12 @@ import org.junit.Test;
 public class SearchForUsersTest extends FunctionalTests {
     @Test
     public void searchForRemovedUsersShouldBeEmpty() {
-    JSONObject jsonObj = new JSONObject();
-    String result = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
-            .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
-            .get("/blog/user/find?searchString=Torreto").then().extract().asString();
+        JSONObject jsonObj = new JSONObject();
+        String result = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .get("/blog/user/find?searchString=Torreto").then().extract().asString();
 
-    Assert.assertThat(result, Matchers.equalTo("[]"));
+        Assert.assertThat(result, Matchers.equalTo("[]"));
     }
 
 }
