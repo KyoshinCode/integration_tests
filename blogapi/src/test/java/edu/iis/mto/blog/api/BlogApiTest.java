@@ -1,10 +1,11 @@
 package edu.iis.mto.blog.api;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.dto.Id;
+import edu.iis.mto.blog.services.BlogService;
+import edu.iis.mto.blog.services.DataFinder;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,13 +18,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.persistence.EntityNotFoundException;
 
-import edu.iis.mto.blog.api.request.UserRequest;
-import edu.iis.mto.blog.dto.Id;
-import edu.iis.mto.blog.services.BlogService;
-import edu.iis.mto.blog.services.DataFinder;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BlogApi.class)
@@ -46,6 +46,7 @@ public class BlogApiTest {
         user.setFirstName("John");
         user.setLastName("Steward");
     }
+
     @Test
     public void postBlogUserShouldResponseWithStatusCreatedAndNewUserId() throws Exception {
         Long newUserId = 1L;
@@ -67,7 +68,12 @@ public class BlogApiTest {
                 .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isConflict());
     }
 
-
+    @Test
+    public void getBlogUserShouldReturn404Status() throws Exception {
+        Long userId = 5L;
+        Mockito.when(finder.getUserData(userId)).thenThrow(new EntityNotFoundException(String.format("user with id %d not exists", userId)));
+        mvc.perform(get("/blog/user/5").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
+    }
 
     private String writeJson(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writer().writeValueAsString(obj);
