@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
@@ -16,6 +17,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -50,21 +53,21 @@ public class LikePostRepositoryTest {
     @Test
     public void shouldFindNoLikePostsIfRepositoryIsEmpty() {
         List<LikePost> likePosts = repository.findAll();
-        Assert.assertThat(likePosts, Matchers.hasSize(0));
+        assertThat(likePosts, Matchers.hasSize(0));
     }
     @Test
     public void shouldFindOneLikePostIfRepositoryContainsOneLikePostEntity() {
         LikePost persistedLikePost = entityManager.persist(likePost);
         List<LikePost> likePosts = repository.findAll();
 
-        Assert.assertThat(likePosts, Matchers.hasSize(1));
-        Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(persistedLikePost.getUser()));
+        assertThat(likePosts, Matchers.hasSize(1));
+        assertThat(likePosts.get(0).getUser(), Matchers.equalTo(persistedLikePost.getUser()));
     }
 
     @Test
     public void shouldStoreANewLikePost() {
         LikePost persistedLikePost = repository.save(likePost);
-        Assert.assertThat(persistedLikePost.getId(), Matchers.notNullValue());
+        assertThat(persistedLikePost.getId(), Matchers.notNullValue());
     }
 
     @Test
@@ -79,8 +82,8 @@ public class LikePostRepositoryTest {
         repository.save(persistedLikePost);
 
         List<LikePost> likePosts = repository.findAll();
-        Assert.assertThat(likePosts.get(0).getPost(), Matchers.equalTo(blogPost2));
-        Assert.assertThat(likePosts.get(0).getId(), Matchers.equalTo(persistedLikePost.getId()));
+        assertThat(likePosts.get(0).getPost(), Matchers.equalTo(blogPost2));
+        assertThat(likePosts.get(0).getId(), Matchers.equalTo(persistedLikePost.getId()));
     }
     @Test
     public void shouldModifyLikePostsUser() {
@@ -97,7 +100,16 @@ public class LikePostRepositoryTest {
         repository.save(persistedLikePost);
 
         List<LikePost> likePosts = repository.findAll();
-        Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(user));
-        Assert.assertThat(likePosts.get(0).getId(), Matchers.equalTo(persistedLikePost.getId()));
+        assertThat(likePosts.get(0).getUser(), Matchers.equalTo(user));
+        assertThat(likePosts.get(0).getId(), Matchers.equalTo(persistedLikePost.getId()));
+    }
+
+    @Test
+    public void shouldFindExistingLikePostByUserAndPost(){
+        entityManager.persist(likePost);
+
+        Optional<LikePost> foundLikePosts = repository.findByUserAndPost(user,blogPost);
+        assertTrue(foundLikePosts.isPresent());
+        assertThat(foundLikePosts.get(), Matchers.equalTo(likePost));
     }
 }
