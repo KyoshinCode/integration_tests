@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Konrad Gos on 22.05.2017.
@@ -66,5 +67,14 @@ public class LikePostRepositoryTest {
 
         Assert.assertThat(currentEntry, Matchers.equalTo("entry text"));
         Assert.assertThat(newEntry, Matchers.equalTo("new entry"));
+    }
+
+    @Test
+    public void usageFindByUserAndPost() {
+        List<BlogPost> blogPosts = blogPostRepository.findAll();
+        List<User> users = userRepository.findAll();
+        Optional<LikePost> likePost = repository.findByUserAndPost(users.get(0), blogPosts.get(0));
+
+        Assert.assertThat(likePost.get().getUser(), Matchers.equalTo(users.get(0)));
     }
 }
