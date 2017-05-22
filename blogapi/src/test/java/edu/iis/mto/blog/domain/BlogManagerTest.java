@@ -78,4 +78,33 @@ public class BlogManagerTest {
         spyBlogService.addLikeToPost(users.get(1).getId(), blogPost.getId());
     }
 
+    @Test (expected = DomainError.class)
+    public void userShouldNotBeAbleToLikeOwnPost() {
+        blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
+        ArgumentCaptor<User> userParam = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepository).save(userParam.capture());
+
+        User user = userParam.getValue();
+        user.setAccountStatus(AccountStatus.CONFIRMED);
+        Mockito.verify(userRepository).save(userParam.capture());
+
+        user = userParam.getValue();
+
+        blogService.createPost(user.getId(), new PostRequest());
+        ArgumentCaptor<BlogPost> blogPostParam = ArgumentCaptor.forClass(BlogPost.class);
+        Mockito.verify(blogPostRepository).save(blogPostParam.capture());
+
+        BlogPost blogPost = blogPostParam.getValue();
+        blogPost.setId(new Long(1));
+        blogPost.setUser(user);
+        Mockito.verify(blogPostRepository).save(blogPostParam.capture());
+
+        blogPost = blogPostParam.getValue();
+
+        BlogService spyBlogService = Mockito.spy(BlogService.class);
+        Mockito.when(spyBlogService.addLikeToPost(user.getId(), blogPost.getId())).thenThrow(new DomainError("User is not able to like own post!"));
+
+        Assert.assertThat(user.getAccountStatus(), is(equalTo(AccountStatus.CONFIRMED)));
+        spyBlogService.addLikeToPost(user.getId(), blogPost.getId());
+    }
 }
