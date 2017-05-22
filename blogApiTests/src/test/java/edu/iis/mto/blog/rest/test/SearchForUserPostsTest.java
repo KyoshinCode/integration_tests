@@ -18,4 +18,9 @@ public class SearchForUserPostsTest extends FunctionalTests {
                 .get("/blog/user/3/post");
     }
 
+    @Test
+    public void searchForPostsShouldReturnCorrectLikesCount() {
+
+    }
+
 }
