@@ -96,4 +96,11 @@ public class UserRepositoryTest {
         List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("rc","","");
         Assert.assertThat(persistesUser.getFirstName(), Matchers.containsString(foundUsers.get(0).getFirstName()));
     }
+
+    @Test
+    public void findNoUser(){
+        repository.deleteAll();
+        List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("","","test@test.com");
+        Assert.assertThat(foundUsers, Matchers.hasSize(0));
+    }
 }
