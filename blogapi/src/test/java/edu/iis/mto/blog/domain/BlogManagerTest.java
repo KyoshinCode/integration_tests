@@ -107,4 +107,35 @@ public class BlogManagerTest {
         Assert.assertThat(user.getAccountStatus(), is(equalTo(AccountStatus.CONFIRMED)));
         spyBlogService.addLikeToPost(user.getId(), blogPost.getId());
     }
+
+    @Test
+    public void confirmedUserCanLikePosts() {
+        blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
+        blogService.createUser(new UserRequest("Brian", "O'Conner", "brian@gmail.com"));
+        ArgumentCaptor<User> userParam = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepository, times(2)).save(userParam.capture());
+
+        List<User> users = userParam.getAllValues();
+        users.get(1).setAccountStatus(AccountStatus.CONFIRMED);
+        Mockito.verify(userRepository, times(2)).save(userParam.capture());
+
+        users = userParam.getAllValues();
+
+        blogService.createPost(users.get(0).getId(), new PostRequest());
+        ArgumentCaptor<BlogPost> blogPostParam = ArgumentCaptor.forClass(BlogPost.class);
+        Mockito.verify(blogPostRepository).save(blogPostParam.capture());
+
+        BlogPost blogPost = blogPostParam.getValue();
+        blogPost.setId(new Long(1));
+        blogPost.setUser(users.get(0));
+        Mockito.verify(blogPostRepository).save(blogPostParam.capture());
+
+        blogPost = blogPostParam.getValue();
+
+        BlogService spyBlogService = Mockito.spy(BlogService.class);
+        Mockito.when(spyBlogService.addLikeToPost(users.get(1).getId(), blogPost.getId())).thenReturn(true);
+
+        Assert.assertThat(users.get(1).getAccountStatus(), is(equalTo(AccountStatus.CONFIRMED)));
+        Assert.assertThat(spyBlogService.addLikeToPost(users.get(1).getId(), blogPost.getId()), is(equalTo(true)));
+    }
 }
