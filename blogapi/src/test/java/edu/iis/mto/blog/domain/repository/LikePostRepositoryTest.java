@@ -52,4 +52,19 @@ public class LikePostRepositoryTest {
         List<LikePost> likePosts = repository.findAll();
         Assert.assertThat(likePosts, Matchers.hasSize(1));
     }
+
+    @Test
+    public void modificationLikePostEntity() {
+        List<LikePost> likePosts = repository.findAll();
+        String currentEntry = likePosts.get(0).getPost().getEntry();
+        likePosts.get(0).getPost().setEntry("new entry");
+
+        repository.save(likePosts);
+
+        likePosts = repository.findAll();
+        String newEntry = likePosts.get(0).getPost().getEntry();
+
+        Assert.assertThat(currentEntry, Matchers.equalTo("entry text"));
+        Assert.assertThat(newEntry, Matchers.equalTo("new entry"));
+    }
 }
