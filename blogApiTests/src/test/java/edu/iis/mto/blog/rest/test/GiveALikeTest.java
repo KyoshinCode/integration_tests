@@ -25,8 +25,11 @@ public class GiveALikeTest extends FunctionalTests  {
     public void confirmedUserCanLikeOtherUsersPost() {
         JSONObject jsonObj = new JSONObject();
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
-                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
                 .post("/blog/user/2/like/1");
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .post("/blog/user/4/like/1");
     }
 
     @Test
@@ -42,10 +45,10 @@ public class GiveALikeTest extends FunctionalTests  {
         JSONObject jsonObj = new JSONObject();
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
-                .post("/blog/user/2/like/1");
+                .post("/blog/user/4/like/1");
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
-                .post("/blog/user/2/like/1");
+                .post("/blog/user/4/like/1");
 
         int likesCount = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
