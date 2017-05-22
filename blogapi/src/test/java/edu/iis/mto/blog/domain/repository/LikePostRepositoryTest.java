@@ -112,4 +112,16 @@ public class LikePostRepositoryTest {
         assertTrue(foundLikePosts.isPresent());
         assertThat(foundLikePosts.get(), Matchers.equalTo(likePost));
     }
+    @Test
+    public void shouldNotFindLikePostByUserAndPost(){
+        entityManager.persist(likePost);
+
+        BlogPost blogPost2 = new BlogPost();
+        blogPost2.setUser(user);
+        blogPost2.setEntry("drugi wpis");
+        entityManager.persist(blogPost2);
+
+        Optional<LikePost> foundLikePosts = repository.findByUserAndPost(user,blogPost2);
+        assertFalse(foundLikePosts.isPresent());
+    }
 }
