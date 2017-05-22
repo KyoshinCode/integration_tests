@@ -66,4 +66,19 @@ public class LikePostRepositoryTest {
         LikePost persistedLikePost = repository.save(likePost);
         Assert.assertThat(persistedLikePost.getId(), Matchers.notNullValue());
     }
+
+    @Test
+    public void shouldModifyLikePost() {
+        LikePost persistedLikePost = repository.save(likePost);
+        BlogPost blogPost2 = new BlogPost();
+
+        blogPost2.setUser(user);
+        blogPost2.setEntry("drugi wpis");
+        persistedLikePost.setPost(blogPost2);
+        entityManager.persist(blogPost2);
+        repository.save(persistedLikePost);
+
+        List<LikePost> likePosts = repository.findAll();
+        Assert.assertThat(likePosts.get(0).getPost(), Matchers.equalTo(blogPost2));
+    }
 }
