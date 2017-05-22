@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
@@ -67,6 +68,37 @@ public class BlogManagerTest {
         user.setLastName("Nowakowski");
         user.setEmail("janusz@domain.com");
         user.setAccountStatus(AccountStatus.CONFIRMED);
+        user.setId(124L);
+        
+        BlogPost blogPost = new BlogPost();
+        blogPost.setUser(author);
+        blogPost.setEntry("Post");
+        blogPost.setId(234L);
+
+        Mockito.when(userRepository.findOne(author.getId())).thenReturn(author);
+        Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
+        Mockito.when(postRepository.findOne(blogPost.getId())).thenReturn(blogPost);
+        Optional<LikePost> emptyLikesList = Optional.empty();
+        Mockito.when(likeRepository.findByUserAndPost(user, blogPost)).thenReturn(emptyLikesList);
+
+        Assert.assertThat(blogService.addLikeToPost(user.getId(), blogPost.getId()), Matchers.equalTo(true));
+    }
+    
+    @Test(expected = DomainError.class)
+    public void addingLikeToPostAsNEWUserThrowsDomainError() {
+    	
+    	User author = new User();
+    	author.setFirstName("Jan");
+    	author.setLastName("Nowak");
+    	author.setEmail("john@domain.com");
+    	author.setAccountStatus(AccountStatus.CONFIRMED);
+    	author.setId(123L);
+        
+        User user = new User();
+        user.setFirstName("Janusz");
+        user.setLastName("Nowakowski");
+        user.setEmail("janusz@domain.com");
+        user.setAccountStatus(AccountStatus.NEW);
         user.setId(124L);
         
         BlogPost blogPost = new BlogPost();
