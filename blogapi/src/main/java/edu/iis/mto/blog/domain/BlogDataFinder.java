@@ -31,7 +31,7 @@ public class BlogDataFinder extends DomainService implements DataFinder {
     @Override
     public List<UserData> findUsers(String searchString) {
         List<User> users = userRepository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(
-                searchString, searchString, searchString);
+                searchString, searchString, searchString).stream().filter(user -> !user.getAccountStatus().equals(AccountStatus.REMOVED)).collect(Collectors.toList());
 
         return users.stream().map(user -> mapper.mapToDto(user)).collect(Collectors.toList());
     }
