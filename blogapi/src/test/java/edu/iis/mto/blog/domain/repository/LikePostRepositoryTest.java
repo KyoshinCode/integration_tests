@@ -80,5 +80,6 @@ public class LikePostRepositoryTest {
 
         List<LikePost> likePosts = repository.findAll();
         Assert.assertThat(likePosts.get(0).getPost(), Matchers.equalTo(blogPost2));
+        Assert.assertThat(likePosts.get(0).getId(), Matchers.equalTo(persistedLikePost.getId()));
     }
 }
