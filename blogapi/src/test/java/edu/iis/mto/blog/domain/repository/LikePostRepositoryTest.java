@@ -124,4 +124,5 @@ public class LikePostRepositoryTest {
         Optional<LikePost> foundLikePosts = repository.findByUserAndPost(user,blogPost2);
         assertFalse(foundLikePosts.isPresent());
     }
+
 }
