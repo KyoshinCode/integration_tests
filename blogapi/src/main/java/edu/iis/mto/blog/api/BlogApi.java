@@ -29,7 +29,10 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(path = "/blog", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Api(tags = "blog api")
 public class BlogApi {
-
+//    JSONObject jsonObj2 = new JSONObject().put("entry", "Post");
+//        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+//                .body(jsonObj2.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
+//                .post("/blog/user/2/post");
     private final static Logger logger = LoggerFactory.getLogger(BlogApi.class);
 
     @Autowired
