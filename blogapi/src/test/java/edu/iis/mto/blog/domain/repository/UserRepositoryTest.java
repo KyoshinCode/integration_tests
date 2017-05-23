@@ -76,4 +76,16 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(1));
         Assert.assertThat(users.get(0), Matchers.equalTo(persistedUser));
     }
+
+
+
+    @Test
+    public void findExistedUserByFirstName() {
+        User persistedUser = entityManager.persist(user1);
+        entityManager.persist(user2);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "*", "*");
+
+        Assert.assertThat(users, Matchers.hasSize(1));
+        Assert.assertThat(users.get(0), Matchers.equalTo(persistedUser));
+    }
 }
