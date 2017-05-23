@@ -76,4 +76,11 @@ public class UserRepositoryTest {
     	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("john", "", "john@domain.com");
     	Assert.assertTrue(foundUsers.contains(user));
     }
+    
+    @Test
+    public void shouldFindExistingUserUpperCase(){
+    	entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JOHN", "", "JOHN@DOMAIN.COM");
+    	Assert.assertTrue(foundUsers.contains(user));
+    }
 }
