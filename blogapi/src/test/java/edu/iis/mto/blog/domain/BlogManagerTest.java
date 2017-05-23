@@ -7,6 +7,7 @@ import edu.iis.mto.blog.domain.repository.BlogPostRepository;
 import edu.iis.mto.blog.domain.repository.LikePostRepository;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -48,6 +49,28 @@ public class BlogManagerTest {
     @Autowired
     BlogService blogService;
 
+    User userJohn;
+    BlogPost blogPost;
+    Optional<LikePost> emptyLikesList;
+
+    @Before
+    public void setUp(){
+        userJohn = new User();
+        userJohn.setFirstName("Jan");
+        userJohn.setEmail("john@domain.com");
+        userJohn.setAccountStatus(AccountStatus.NEW);
+        userJohn.setId(1L);
+
+        blogPost = new BlogPost();
+        blogPost.setUser(userJohn);
+        blogPost.setEntry("My first post");
+        blogPost.setId(1L);
+
+        Mockito.when(userRepository.findOne(userJohn.getId())).thenReturn(userJohn);
+        Mockito.when(blogPostRepository.findOne(blogPost.getId())).thenReturn(blogPost);
+
+        emptyLikesList = Optional.empty();
+    }
     @Test
     public void creatingNewUserShouldSetAccountStatusToNEW() {
         blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
@@ -59,30 +82,30 @@ public class BlogManagerTest {
 
     @Test(expected = DomainError.class)
     public void userWithStatusNewShouldNotLikePost() {
-        User userJohn = new User();
-        userJohn.setFirstName("Jan");
-        userJohn.setEmail("john@domain.com");
-        userJohn.setAccountStatus(AccountStatus.NEW);
-        userJohn.setId(1L);
-
         User userJacob = new User();
         userJacob.setFirstName("Jacob");
         userJacob.setEmail("jacob@domain.com");
         userJacob.setAccountStatus(AccountStatus.NEW);
         userJacob.setId(2L);
 
-        BlogPost blogPost = new BlogPost();
-        blogPost.setUser(userJohn);
-        blogPost.setEntry("My first post");
-        blogPost.setId(1L);
-
-        Mockito.when(userRepository.findOne(userJohn.getId())).thenReturn(userJohn);
         Mockito.when(userRepository.findOne(userJacob.getId())).thenReturn(userJacob);
-        Mockito.when(blogPostRepository.findOne(blogPost.getId())).thenReturn(blogPost);
-        Optional<LikePost> emptyLikesList = Optional.empty();
         Mockito.when(likePostRepository.findByUserAndPost(userJacob, blogPost)).thenReturn(emptyLikesList);
 
         assertFalse(blogService.addLikeToPost(userJacob.getId(), blogPost.getId()));
+    }
+
+    @Test(expected = DomainError.class)
+    public void userWithStatusConfirmedShouldLikePost() {
+        User userJacob = new User();
+        userJacob.setFirstName("Jacob");
+        userJacob.setEmail("jacob@domain.com");
+        userJacob.setAccountStatus(AccountStatus.NEW);
+        userJacob.setId(2L);
+
+        Mockito.when(userRepository.findOne(userJacob.getId())).thenReturn(userJacob);
+        Mockito.when(likePostRepository.findByUserAndPost(userJacob, blogPost)).thenReturn(emptyLikesList);
+
+        assertTrue(blogService.addLikeToPost(userJacob.getId(), blogPost.getId()));
     }
 
 }
