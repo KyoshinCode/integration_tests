@@ -28,5 +28,14 @@ public class SearchUserTest {
 		Assert.assertThat((received.contains("john@domain.com") &&
 				received2.contains("brian@domain.com")), is(equalTo(true)));
 	}
+	
+	@Test
+	public void userSearchDoesntReturnRemovedUsers() {
+		String received = "";
+		received = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+		        .body(received).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+		        .get("/blog/user/find/?searchString=Ciocia").print();
+		Assert.assertThat(received, is(equalTo("[]")));
+	}
 
 }

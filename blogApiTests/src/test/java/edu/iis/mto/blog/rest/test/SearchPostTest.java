@@ -43,7 +43,7 @@ public class SearchPostTest {
 	}
 	
 	@Test
-	public void removedPostsShouldNotBeFound() {
+	public void removedUsersPostsShouldNotBeFound() {
 		JSONObject jsonObj = new JSONObject().put("entry", "trala");
 		RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
 		.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
