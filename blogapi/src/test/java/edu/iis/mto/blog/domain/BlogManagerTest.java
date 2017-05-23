@@ -94,12 +94,12 @@ public class BlogManagerTest {
         assertFalse(blogService.addLikeToPost(userJacob.getId(), blogPost.getId()));
     }
 
-    @Test(expected = DomainError.class)
+    @Test
     public void userWithStatusConfirmedShouldLikePost() {
         User userJacob = new User();
         userJacob.setFirstName("Jacob");
         userJacob.setEmail("jacob@domain.com");
-        userJacob.setAccountStatus(AccountStatus.NEW);
+        userJacob.setAccountStatus(AccountStatus.CONFIRMED);
         userJacob.setId(2L);
 
         Mockito.when(userRepository.findOne(userJacob.getId())).thenReturn(userJacob);
