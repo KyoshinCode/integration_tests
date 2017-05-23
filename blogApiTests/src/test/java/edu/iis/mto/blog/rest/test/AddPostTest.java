@@ -17,5 +17,14 @@ public class AddPostTest extends FunctionalTests {
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
                 .post("/blog/user/1/post");
+
+        jsonObj = new JSONObject().put("email", "test@test.com").put("accountStatus", "NEW").put("firstName", "test").put("lastName", "test");
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
+                .post("/blog/user");
+
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .post("/blog/user/3/like/1");
     }
 }
