@@ -16,6 +16,7 @@ public class AddPostTest extends FunctionalTests {
     public void testOrder(){
         onlyConfirmedUserCanAddPost();
         confirmedUserCannotLikeOwnPost();
+        cannotLikePostTwiceByOneUser();
     }
 
     @Ignore
@@ -41,5 +42,18 @@ public class AddPostTest extends FunctionalTests {
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
                 .post("/blog/user/1/like/1");
+    }
+
+    @Ignore
+    public void cannotLikePostTwiceByOneUser(){
+        JSONObject jsonObj = new JSONObject();
+        String receive = "";
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .post("/blog/user/3/like/1");
+
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(receive).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+                .get("/blog/user/1/post").print().contains("likesCount:" + " 1");
     }
 }
