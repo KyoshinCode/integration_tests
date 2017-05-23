@@ -33,12 +33,20 @@ public class SearchPostTest {
 		
     	RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
         .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
-        .post("/blog/user/2/like/2");
+        .post("/blog/user/3/like/1");
     	
     	received = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
         .body(received).expect().log().all().statusCode(HttpStatus.SC_OK).when()
         .get("/blog/user/1/post").print();
     	
-    	Assert.assertThat((received.contains('"' + "likesCount" + '"' + ":0") && received.contains('"' + "likesCount" + '"' + ":1")), is(equalTo(true)));
+    	Assert.assertThat((received.contains('"' + "likesCount" + '"' + ":1")), is(equalTo(true)));
+	}
+	
+	@Test
+	public void removedPostsShouldNotBeFound() {
+		JSONObject jsonObj = new JSONObject().put("entry", "trala");
+		RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+		.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
+		.post("/blog/user/4/post");
 	}
 }
