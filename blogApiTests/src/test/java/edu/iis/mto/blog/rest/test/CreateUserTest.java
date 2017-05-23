@@ -25,7 +25,6 @@ public class CreateUserTest extends FunctionalTests {
                 .post("/blog/user");
 
         JSONObject JsonObj2 = new JSONObject().put("email", "mietek@domain.com");
-
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(JsonObj2.toString()).expect().log().all().statusCode(HttpStatus.SC_CONFLICT).when()
                 .post("/blog/user");
@@ -33,10 +32,17 @@ public class CreateUserTest extends FunctionalTests {
 
     @Test
     public void userWithStatusConfirmedShouldAddPost() {
-        JSONObject jsonObj = new JSONObject().put("entry", "Post");
+        JSONObject jsonObj = new JSONObject().put("entry", "post");
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
                 .post("/blog/user/1/post");
+    }
+    @Test
+    public void userWithStatusNewShouldNotAddPost() {
+        JSONObject jsonObj = new JSONObject().put("entry", "post");
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
+                .post("/blog/user/2/post");
     }
 
 }
