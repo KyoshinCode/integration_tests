@@ -58,11 +58,16 @@ public class BlogManagerTest {
 
     @Test
     public void confirmedUserCanAddLikePost() throws Exception {
+        prepareForAddingLike(AccountStatus.CONFIRMED);
+        assertThat(blogService.addLikeToPost(2L, 1L)).isTrue();
+    }
+
+    private void prepareForAddingLike(AccountStatus likerStatus) {
         User postAuthor = new User();
         postAuthor.setId(1L);
 
         User likeAuthor = new User();
-        likeAuthor.setAccountStatus(AccountStatus.CONFIRMED);
+        likeAuthor.setAccountStatus(likerStatus);
         likeAuthor.setId(2L);
 
         BlogPost blogPost = new BlogPost();
@@ -71,7 +76,5 @@ public class BlogManagerTest {
         when(userRepository.findOne(2L)).thenReturn(likeAuthor);
         when(blogPostRepository.findOne(1L)).thenReturn(blogPost);
         when(likePostRepository.findByUserAndPost(likeAuthor, blogPost)).thenReturn(Optional.empty());
-
-        assertThat(blogService.addLikeToPost(2L, 1L)).isTrue();
     }
 }
