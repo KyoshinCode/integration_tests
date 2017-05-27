@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 
 @RunWith(SpringRunner.class)
@@ -84,4 +85,10 @@ public class LikePostRepositoryTest {
 
         assertThat(found.getId()).isEqualTo(likePost.getId());
     }
+    @Test
+    public void shouldNotFindLikePostByInvalidUserAndValidBlogPost() {
+        create(otherUser);
+        repository.findByUserAndPost(user, post).ifPresent(likePost1 -> fail("Should not find like post", likePost1));
+    }
+
 }
