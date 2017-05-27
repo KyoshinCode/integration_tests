@@ -15,6 +15,7 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -57,6 +58,12 @@ public class BlogApiTest {
     public void askingForNotExistingUserShouldReturn404() throws Exception {
         when(finder.getUserData(5L)).thenThrow(new EntityNotFoundException());
         mvc.perform(get("/blog/user/5")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void shouldReturn409WhenDataIntegrityViolationException() throws Exception {
+        when(finder.getUserData(5L)).thenThrow(new DataIntegrityViolationException("data integrity violation"));
+        mvc.perform(get("/blog/user/5")).andExpect(status().isConflict());
     }
 
     private String writeJson(Object obj) throws JsonProcessingException {
