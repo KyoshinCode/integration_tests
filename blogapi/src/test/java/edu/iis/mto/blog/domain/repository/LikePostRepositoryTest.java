@@ -6,6 +6,9 @@ import edu.iis.mto.blog.domain.model.User;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -32,26 +35,44 @@ public class LikePostRepositoryTest {
 
     private BlogPost post;
     private User user;
+    private User otherUser;
 
     @Before
     public void setUp() throws Exception {
-        user = userRepository.findAll().get(0);
+        List<User> users = userRepository.findAll();
+        user = users.get(0);
+        otherUser = users.get(1);
         post = new BlogPost();
         post.setUser(user);
         post.setEntry("Test post");
         post = blogPostRepository.save(post);
     }
 
-    @Test
-    public void createdLikeShouldBeInBlogPostLikesList() {
+    private LikePost create(User user) {
         LikePost likePost = new LikePost();
         likePost.setUser(user);
         likePost.setPost(post);
 
-        likePost = repository.save(likePost);
+        return repository.save(likePost);
+    }
+
+    @Test
+    public void createdLikeShouldBeInBlogPostLikesList() {
+        LikePost likePost = create(otherUser);
 
         entityManager.refresh(post);
         assertThat(post.getLikes()).isNotEmpty();
         assertThat(post.getLikes().get(0).getId()).isEqualTo(likePost.getId());
+    }
+
+    @Test
+    public void editedLikePostShouldBeReflectedInBlogPost() {
+        LikePost likePost = create(otherUser);
+        likePost.setUser(user);
+
+        repository.save(likePost);
+
+        entityManager.refresh(post);
+        assertThat(post.getLikes().get(0).getUser().getId()).isEqualTo(user.getId());
     }
 }
