@@ -32,10 +32,14 @@ public class UserRepositoryTest {
 
     @Before
     public void setUp() {
+        repository.deleteAll();
+        repository.flush();
+
         user = new User();
         user.setFirstName("Jan");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
+
     }
 
     @Test
