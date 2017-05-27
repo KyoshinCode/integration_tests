@@ -75,4 +75,13 @@ public class LikePostRepositoryTest {
         entityManager.refresh(post);
         assertThat(post.getLikes().get(0).getUser().getId()).isEqualTo(user.getId());
     }
+
+    @Test
+    public void shouldFindLikePostByUserAndBlogPost() {
+        LikePost likePost = create(otherUser);
+
+        LikePost found = repository.findByUserAndPost(otherUser, post).orElseThrow(() -> new AssertionError("Should find like post"));
+
+        assertThat(found.getId()).isEqualTo(likePost.getId());
+    }
 }
