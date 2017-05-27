@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain;
 
 import edu.iis.mto.blog.api.request.PostRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.repository.BlogPostRepository;
 import edu.iis.mto.blog.domain.repository.LikePostRepository;
@@ -60,6 +61,12 @@ public class BlogManagerTest {
     public void confirmedUserCanAddLikePost() throws Exception {
         prepareForAddingLike(AccountStatus.CONFIRMED);
         assertThat(blogService.addLikeToPost(2L, 1L)).isTrue();
+    }
+
+    @Test(expected = DomainError.class)
+    public void newUserCanNotAddLikePost() throws Exception {
+        prepareForAddingLike(AccountStatus.NEW);
+        blogService.addLikeToPost(2L, 1L);
     }
 
     private void prepareForAddingLike(AccountStatus likerStatus) {
