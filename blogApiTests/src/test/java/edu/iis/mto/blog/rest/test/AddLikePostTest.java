@@ -14,4 +14,10 @@ public class AddLikePostTest extends FunctionalTests {
                 .expect().log().all().statusCode(HttpStatus.SC_OK)
                 .when().post("/blog/user/3/like/1");
     }
+    @Test
+    public void newUserCanNotAddLike() {
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .when().post("/blog/user/2/like/1");
+    }
 }
