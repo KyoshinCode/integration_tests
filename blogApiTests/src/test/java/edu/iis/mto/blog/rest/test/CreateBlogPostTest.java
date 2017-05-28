@@ -21,7 +21,7 @@ public class CreateBlogPostTest extends FunctionalTests {
         JSONObject request = new JSONObject()
                 .put("entry", "Invalid creation");
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
-                .body(request.toString()).expect().log().all().statusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
+                .body(request.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST)
                 .when().post("/blog/user/2/post");
     }
 }
