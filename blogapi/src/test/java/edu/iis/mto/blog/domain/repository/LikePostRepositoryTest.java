@@ -2,6 +2,7 @@ package edu.iis.mto.blog.domain.repository;
 
 import java.util.List;
 
+import org.assertj.core.api.Assertions;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import com.fasterxml.jackson.annotation.JsonTypeInfo.As;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
@@ -62,5 +65,19 @@ public class LikePostRepositoryTest {
 		
 		Assert.assertThat(likedPosts, Matchers.hasSize(0));
 	}
+	
+	@Test 
+	public void shouldFindOneLikePostInRepository() {
+		
+		userRepository.save(user);
+		blogRepository.save(post);
+		repository.save(likePost);
+		List<LikePost> likedPosts = repository.findAll();
+		
+		Assert.assertThat(likedPosts, Matchers.hasSize(1));
+		
+	}
+	
+	
 	
 }
