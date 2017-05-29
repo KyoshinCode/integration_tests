@@ -70,4 +70,17 @@ public class LikePostRepositoryTest {
         LikePost persistedLikePost = repository.save(likePost);
         Assert.assertThat(persistedLikePost.getId(), Matchers.notNullValue());
     }
+    
+    @Test
+    public void shouldNotFindLikePost(){
+        entityManager.persist(likePost);
+
+        BlogPost blogPost2 = new BlogPost();
+        blogPost2.setUser(user);
+        blogPost2.setEntry("drugi wpis");
+        entityManager.persist(blogPost2);
+
+        Optional<LikePost> foundLikePosts = repository.findByUserAndPost(user,blogPost2);
+        assertFalse(foundLikePosts.isPresent());
+    }
 }
