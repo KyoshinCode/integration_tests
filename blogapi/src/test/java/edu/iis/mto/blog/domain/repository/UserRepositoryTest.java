@@ -88,5 +88,15 @@ public class UserRepositoryTest {
     	Assert.assertThat(users.get(0).getLastName(), Matchers.equalTo("Nowak"));
     }
     
+    @Test
+    public void shouldFindOneUserByFirstNameUpercases() {
+    	
+    	User persistedUser = repository.save(user);
+    	
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JAN", "", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
+    }
     
 }
