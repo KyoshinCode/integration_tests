@@ -64,4 +64,10 @@ public class LikePostRepositoryTest {
         Assert.assertThat(likePosts, Matchers.hasSize(1));
         Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(persistedLikePost.getUser()));
     }
+    
+    @Test
+    public void shouldStoreANewLikePost() {
+        LikePost persistedLikePost = repository.save(likePost);
+        Assert.assertThat(persistedLikePost.getId(), Matchers.notNullValue());
+    }
 }
