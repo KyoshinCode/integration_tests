@@ -26,4 +26,12 @@ public class CreateUserTest extends FunctionalTests {
                 .body(JsonObj2.toString()).expect().log().all().statusCode(HttpStatus.SC_CONFLICT).when()
                 .post("/blog/user");
     }
+    
+    @Test
+    public void userWithStatusConfirmedShouldAddPost() {
+        JSONObject jsonObj = new JSONObject().put("entry", "Post");
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
+                .post("/blog/user/1/post");
+    }
 }
