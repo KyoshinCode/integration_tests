@@ -22,9 +22,8 @@ public class SearchPostTest extends FunctionalTests {
 
     @Test
     public void correctLikeNumber() throws Exception {
-        int likes = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
-                .expect().log().all().statusCode(HttpStatus.SC_OK).when()
-                .get("/blog/user/1/post").then().extract().jsonPath().getInt("likesCount[1]");
-        Assert.assertThat(likes, Matchers.equalTo(2));
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .expect().log().all().statusCode(HttpStatus.SC_OK).body("likesCount[1]", Matchers.equalTo(2)).when()
+                .get("/blog/user/1/post");
     }
 }
