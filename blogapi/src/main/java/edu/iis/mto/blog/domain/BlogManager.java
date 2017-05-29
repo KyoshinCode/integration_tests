@@ -30,6 +30,9 @@ public class BlogManager extends DomainService implements BlogService {
     @Override
     public Long createPost(Long userId, PostRequest postRequest) {
         User user = userRepository.findOne(userId);
+        if(user.getAccountStatus() != AccountStatus.CONFIRMED){
+            throw new DomainError("Only the user with the status of a CONFIRMED can add the post");
+        }
         BlogPost post = mapper.mapToEntity(postRequest);
         post.setUser(user);
         blogPostRepository.save(post);
