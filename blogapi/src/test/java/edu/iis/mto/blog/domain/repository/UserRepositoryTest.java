@@ -71,12 +71,22 @@ public class UserRepositoryTest {
     	
     	User persistedUser = repository.save(user);
     	
-    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(user.getFirstName(), "", "");
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "", "");
     	
     	Assert.assertThat(users, Matchers.hasSize(1));
-    	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo(user.getFirstName()));
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
     }
     
+    @Test 
+    public void shouldFindOneUserByLastName() {
+    	
+    	User persistedUser = repository.save(user);
+    	
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "Nowak", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getLastName(), Matchers.equalTo("Nowak"));
+    }
     
     
 }
