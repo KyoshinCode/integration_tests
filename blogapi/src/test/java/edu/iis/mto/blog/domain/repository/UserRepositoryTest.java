@@ -99,4 +99,15 @@ public class UserRepositoryTest {
     	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
     }
     
+    @Test
+    public void shouldNotFindUser() {
+    	
+    	repository.save(user);
+    	
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Piotr", "Piotr", "Piotr");
+    	Assert.assertThat(users, Matchers.hasSize(0));
+    	
+    }
+    
+    
 }
