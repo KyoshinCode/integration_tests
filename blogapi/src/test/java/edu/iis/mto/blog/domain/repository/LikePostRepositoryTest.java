@@ -106,4 +106,25 @@ public class LikePostRepositoryTest {
 		Assert.assertThat(likedPosts.isPresent() , Matchers.is(true));
 	}
 	
+	@Test
+	public void shouldNotFindPost_IncorrectUser() {
+		
+		userRepository.save(user);
+		blogRepository.save(post);
+		repository.save(likePost);
+		
+		User altUser = new User();
+		altUser.setFirstName("Mike");
+		altUser.setLastName("Wazowsky");
+		altUser.setEmail("monsterscaryfications@mon.com");
+		altUser.setAccountStatus(AccountStatus.CONFIRMED);
+		userRepository.save(altUser);
+		
+		Optional<LikePost> likedPosts = repository.findByUserAndPost(altUser, post);
+		
+		
+		Assert.assertThat(likedPosts.isPresent() , Matchers.is(false));
+		
+	}
+	
 }
