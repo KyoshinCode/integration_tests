@@ -1,4 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
+
+import edu.iis.mto.blog.domain.model.AccountStatus;
+import edu.iis.mto.blog.domain.model.BlogPost;
  
 import java.util.List;
 import org.hamcrest.Matchers;
@@ -24,17 +27,41 @@ public class LikePostRepositoryTest {
     @Autowired
     private LikePostRepository repository;
     private LikePost likePost;
+    
+    private User user;
+    private BlogPost blogPost;
 
     @Before
     public void setUp() {
         likePost = new LikePost();
-        likePost.setPost(null);
-        likePost.setUser(null);
+        blogPost = new BlogPost();
+        user = new User();
+
+        user.setEmail("john@domain.com");
+        user.setFirstName("John");
+        user.setLastName("Steward");
+        user.setAccountStatus(AccountStatus.NEW);
+        blogPost.setUser(user);
+        blogPost.setEntry("Testowy wpis");
+        entityManager.persist(user);
+        entityManager.persist(blogPost);
+
+        likePost.setPost(blogPost);
+        likePost.setUser(user);
     }
 
     @Test
     public void shouldFindNoLikePostsIfRepositoryIsEmpty() {
         List<LikePost> likePosts = repository.findAll();
         Assert.assertThat(likePosts, Matchers.hasSize(0));
+    }
+    
+    @Test
+    public void shouldFindOneLikePostIfRepositoryContainsOneLikePostEntity() {
+        LikePost persistedLikePost = entityManager.persist(likePost);
+        List<LikePost> likePosts = repository.findAll();
+
+        Assert.assertThat(likePosts, Matchers.hasSize(1));
+        Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(persistedLikePost.getUser()));
     }
 }
