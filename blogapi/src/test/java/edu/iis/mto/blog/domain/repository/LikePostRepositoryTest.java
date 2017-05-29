@@ -122,9 +122,24 @@ public class LikePostRepositoryTest {
 		
 		Optional<LikePost> likedPosts = repository.findByUserAndPost(altUser, post);
 		
-		
 		Assert.assertThat(likedPosts.isPresent() , Matchers.is(false));
+	}
+	
+	@Test
+	public void shouldNotFindPost_IncorrectPost() {
 		
+		userRepository.save(user);
+		blogRepository.save(post);
+		repository.save(likePost);
+		
+		BlogPost altPost = new BlogPost();
+		altPost.setEntry("OMG!");
+		altPost.setUser(user);
+		blogRepository.save(altPost);
+		
+		Optional<LikePost> likedPosts = repository.findByUserAndPost(user, altPost);
+		
+		Assert.assertThat(likedPosts.isPresent(), Matchers.is(false));
 	}
 	
 }
