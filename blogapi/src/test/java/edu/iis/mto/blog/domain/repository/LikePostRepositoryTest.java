@@ -75,6 +75,22 @@ public class LikePostRepositoryTest {
 		List<LikePost> likedPosts = repository.findAll();
 		
 		Assert.assertThat(likedPosts, Matchers.hasSize(1));
+	}
+	
+	@Test
+	public void shouldModifyLikePost() {
+	
+		userRepository.save(user);
+		blogRepository.save(post);
+		repository.save(likePost);
+		List<LikePost> likedPosts = repository.findAll();
+		
+		String oldPost = likedPosts.get(0).getPost().getEntry();
+		likedPosts.get(0).getPost().setEntry("very new");
+		String newPost = likedPosts.get(0).getPost().getEntry();
+		
+		Assert.assertThat(oldPost, Matchers.equalTo("new"));
+		Assert.assertThat(newPost, Matchers.equalTo("very new"));
 		
 	}
 	
