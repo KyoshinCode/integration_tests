@@ -1,11 +1,15 @@
 package edu.iis.mto.blog.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -73,5 +77,12 @@ public class BlogApiTest {
     			.andExpect(status().isConflict());
     }
     
+    
+    @Test
+    public void getNotExistingDataShouldGenerate404Status() throws Exception {
+    	
+    	Mockito.when(finder.getUserData(15L)).thenThrow(new EntityNotFoundException());
+    	mvc.perform(get("/blog/user/15").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
+    }
 
 }
