@@ -31,6 +31,9 @@ public class BlogManager extends DomainService implements BlogService {
     public Long createPost(Long userId, PostRequest postRequest) {
         User user = userRepository.findOne(userId);
         BlogPost post = mapper.mapToEntity(postRequest);
+        if (user.getAccountStatus() != AccountStatus.CONFIRMED) {
+        	throw new DomainError("adding like to post is only for confirmed users");
+        }
         post.setUser(user);
         blogPostRepository.save(post);
         return post.getId();
