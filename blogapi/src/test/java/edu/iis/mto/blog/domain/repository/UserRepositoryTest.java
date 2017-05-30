@@ -14,6 +14,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
+import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.User;
 
 @RunWith(SpringRunner.class)
@@ -22,21 +23,22 @@ public class UserRepositoryTest {
 
     @Autowired
     private TestEntityManager entityManager;
-
     @Autowired
     private UserRepository repository;
 
+
     private User user;
+    
 
     @Before
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
+        user.setEmail("jan@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
 
-    @Ignore
+    
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
 
@@ -45,22 +47,26 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(0));
     }
 
-    @Ignore
+    
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
+     
+        for (User u : users) {
+        	System.out.println(u.getFirstName() + " " + u.getLastName());
+        }
 
         Assert.assertThat(users, Matchers.hasSize(1));
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
-    @Ignore
+   
     @Test
     public void shouldStoreANewUser() {
 
         User persistedUser = repository.save(user);
-
+        
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
