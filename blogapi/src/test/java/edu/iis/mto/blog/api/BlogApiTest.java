@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.api.request.UserRequestBuilder;
 import edu.iis.mto.blog.dto.Id;
 import edu.iis.mto.blog.services.BlogService;
 import edu.iis.mto.blog.services.DataFinder;
@@ -53,10 +54,7 @@ public class BlogApiTest {
     @Test
     public void postBlogUserShouldResponseWithStatusCreatedAndNewUserId() throws Exception {
         Long newUserId = 1L;
-        UserRequest user = new UserRequest();
-        user.setEmail("john@domain.com");
-        user.setFirstName("John");
-        user.setLastName("Steward");
+        UserRequest user = new UserRequestBuilder().setEmail("john@domain.com").setFirstName("John").setLastName("Steward").create();
         Mockito.when(blogService.createUser(user)).thenReturn(newUserId);
         String content = writeJson(user);
 
@@ -68,7 +66,7 @@ public class BlogApiTest {
     @Test
     public void shouldGenerateHTTPconflict409WhenDataIntegrityViolationException() throws Exception {
         Long newUserId = 1L;
-        UserRequest user = new UserRequest().setEmail("john@domain.com").setFirstName("John").setLastName("Steward");
+        UserRequest user = new UserRequestBuilder().setEmail("john@domain.com").setFirstName("John").setLastName("Steward").create();
         String content = writeJson(user);
         Mockito.when(blogService.createUser(user)).thenThrow(new DataIntegrityViolationException("DataIntegrityViolationException"));
 
