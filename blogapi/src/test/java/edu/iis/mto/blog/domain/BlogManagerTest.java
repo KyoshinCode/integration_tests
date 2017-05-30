@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
@@ -98,7 +99,17 @@ public class BlogManagerTest {
     	Mockito.when(likeRepository.findByUserAndPost(secondUser, post)).thenReturn(list);
     	
     	Assert.assertThat(blogService.addLikeToPost(secondUser.getId(), post.getId()), Matchers.is(true));
-//    	assertTrue(blogService.addLikeToPost(secondUser.getId(), post.getId()));
+    }
+    
+    @Test(expected = DomainError.class)
+    public void userCannotLikeOwnPost() {
+    	
+    	Mockito.when(userRepository.findOne(firstUser.getId())).thenReturn(firstUser);
+    	Mockito.when(blogRepository.findOne(post.getId())).thenReturn(post);
+    	Optional<LikePost> list = Optional.empty();
+    	Mockito.when(likeRepository.findByUserAndPost(firstUser, post)).thenReturn(list);
+    	
+    	Assert.assertThat(blogService.addLikeToPost(firstUser.getId(), post.getId()), Matchers.is(false));
     }
     
 
