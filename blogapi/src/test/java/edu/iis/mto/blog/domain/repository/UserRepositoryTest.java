@@ -16,6 +16,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.User;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserRepositoryTest {
@@ -30,13 +32,16 @@ public class UserRepositoryTest {
 
     @Before
     public void setUp() {
+        repository.deleteAll();
+        repository.flush();
+
         user = new User();
         user.setFirstName("Jan");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
+
     }
 
-    @Ignore
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
 
@@ -45,7 +50,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(0));
     }
 
-    @Ignore
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
         User persistedUser = entityManager.persist(user);
@@ -55,7 +59,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
-    @Ignore
     @Test
     public void shouldStoreANewUser() {
 
@@ -64,4 +67,43 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldFindUserByUsername() throws Exception {
+        repository.save(user);
+
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "wrong", "wrong");
+
+        assertUserInList(found, user);
+    }
+
+    @Test
+    public void shouldFindByEmail() throws Exception {
+        repository.save(user);
+
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong", "wrong", "john@domain.com");
+
+        assertUserInList(found, user);
+    }
+
+    @Test
+    public void shouldNotFindUserWithInvalidData() throws Exception {
+        repository.save(user);
+
+        List<User> found = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("wrong", "wrong", "wrong");
+
+        assertThat(found).isEmpty();
+    }
+
+    private void assertUserInList(List<User> users, User user) {
+        assertThat(users).isNotEmpty();
+        checkSameUser(users.get(0), user);
+    }
+
+    private void checkSameUser(User first, User second) {
+        assertThat(first.getAccountStatus()).isEqualTo(second.getAccountStatus());
+        assertThat(first.getFirstName()).isEqualTo(second.getFirstName());
+        assertThat(first.getLastName()).isEqualTo(second.getLastName());
+        assertThat(first.getEmail()).isEqualTo(second.getEmail());
+        assertThat(first.getId()).isEqualTo(second.getId());
+    }
 }
