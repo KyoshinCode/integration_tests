@@ -35,15 +35,6 @@ public class CreateUserTest extends FunctionalTests {
     	request(first, "/blog/user", HttpStatus.SC_CREATED);
     	request(second, "/blog/user", HttpStatus.SC_CONFLICT);
     	
-//    	RestAssured.given().accept(ContentType.JSON)
-//    	.header(HEADER_1, HEADER_2)
-//    	.body(first.toString()).expect().log().all()
-//    	.statusCode(HttpStatus.SC_CREATED).when().post("/blog/user");
-//    	
-//    	RestAssured.given().accept(ContentType.JSON)
-//    	.header(HEADER_1, HEADER_2)
-//    	.body(second.toString()).expect().log().all().statusCode(HttpStatus.SC_CONFLICT).when()
-//    	.post("/blog/user");
     }
 
     @Test
@@ -55,15 +46,6 @@ public class CreateUserTest extends FunctionalTests {
     	request(postOne, "/blog/user/1/post", HttpStatus.SC_CREATED);
     	request(postTwo, "/blog/user/2/post", HttpStatus.SC_BAD_REQUEST);
     	
-//    	RestAssured.given().accept(ContentType.JSON)
-//    	.header(HEADER_1, HEADER_2)
-//    	.body(postOne.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
-//    	.post("/blog/user/1/post");
-//    	
-//    	RestAssured.given().accept(ContentType.JSON)
-//    	.header(HEADER_1, HEADER_2)
-//    	.body(postTwo.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
-//    	.post("/blog/user/2/post");
     }
     
     @Test
