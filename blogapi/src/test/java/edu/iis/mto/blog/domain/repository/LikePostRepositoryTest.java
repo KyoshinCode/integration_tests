@@ -139,7 +139,7 @@ public class LikePostRepositoryTest {
 		
 		Optional<LikePost> likedPosts = repository.findByUserAndPost(user, altPost);
 		
-		Assert.assertThat(likedPosts.isPresent(), Matchers.is(false));
+		Assert.assertThat(likedPosts.isPresent(), Matchers.is(false	));
 	}
 	
 }
