@@ -57,6 +57,6 @@ public class UserRequest {
     }
 
     private boolean eq(Object val1, Object val2) {
-        return val1 != null ? val1.equals(val2) : val2 == null ? true : false;
+        return val1 != null ? val1.equals(val2) : val2 == null;
     }
 }
