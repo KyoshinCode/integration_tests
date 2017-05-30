@@ -29,7 +29,6 @@ import io.swagger.annotations.ApiOperation;
 @RequestMapping(path = "/blog", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 @Api(tags = "blog api")
 public class BlogApi {
-
     private final static Logger logger = LoggerFactory.getLogger(BlogApi.class);
 
     @Autowired
