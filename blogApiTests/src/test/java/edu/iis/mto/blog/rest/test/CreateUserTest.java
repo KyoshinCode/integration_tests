@@ -58,8 +58,26 @@ public class CreateUserTest extends FunctionalTests {
     	.header(HEADER_1, HEADER_2)
     	.body(postTwo.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
     	.post("/blog/user/2/post");
+    }
+    
+    @Test
+    public void onlyConfirmedUserCanLikePost_CannotLikeOwnPost() {
+    	
+    	JSONObject postOne = new JSONObject().put("entry" , "First");
+    	
+//    	RestAssured.given().accept(ContentType.JSON)
+//    	.header(HEADER_1, HEADER_2)
+//    	.body(postOne.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
+//    	.post("/blog/user/1/post");
+//    	
+    	
+    	RestAssured.given().accept(ContentType.JSON)
+    	.header(HEADER_1, HEADER_2)
+    	.body(postOne.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
+    	.post("/blog/user/1/like/1");
     	
     	
+    	// /blog/user/{userId}/like/{postId
     }
     
 }
