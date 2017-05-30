@@ -41,7 +41,9 @@ public class LikePostRepositoryTest {
     @Before
     public void setUp() {
         List<User> users = userRepository.findAll();
-        BlogPost blogPost = new BlogPost().setEntry("old entry").setUser(users.get(0));
+        BlogPost blogPost = new BlogPost();
+        blogPost.setEntry("old entry");
+        blogPost.setUser(users.get(0));
         blogPost.setId((long) 3);
         blogPostRepository.save(blogPost);
 
