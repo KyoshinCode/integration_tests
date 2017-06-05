@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -79,4 +80,14 @@ public class LikePostRepositoryTest {
 
         Assert.assertThat(persistedLikePost.getId(), Matchers.notNullValue());
     }
+
+	@Test
+	public void shouldFindLikesIfUserAndPostAreCorrect() {
+		LikePost persistedLikePost = repository.save(likePost);
+
+		Optional<LikePost> likePosts = repository.findByUserAndPost(user, blogPost);
+
+		Assert.assertThat(likePosts.isPresent(), Matchers.equalTo(true));
+		Assert.assertThat(likePosts.get(), Matchers.equalTo(likePost));
+	}
 }
