@@ -48,7 +48,6 @@ public class LikePostRepositoryTest {
         blogPost = new BlogPost();
         blogPost.setUser(user);
         blogPost.setEntry("Post");
-        blogPost.setId(1L);
 
         likePost = new LikePost();
         likePost.setUser(user);
@@ -69,9 +68,15 @@ public class LikePostRepositoryTest {
 
     @Test
     public void shouldFindNoLikePostIfRepositoryIsEmpty() {
-
     	List<LikePost> likePosts = repository.findAll();
 
         Assert.assertThat(likePosts, Matchers.hasSize(0));
+    }
+
+    @Test
+    public void shouldStoreANewLikePost() {
+        LikePost persistedLikePost = repository.save(likePost);
+
+        Assert.assertThat(persistedLikePost.getId(), Matchers.notNullValue());
     }
 }
