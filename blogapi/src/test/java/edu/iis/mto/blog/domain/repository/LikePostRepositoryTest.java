@@ -1,8 +1,12 @@
 package edu.iis.mto.blog.domain.repository;
 
+import java.util.List;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.hamcrest.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -21,7 +25,13 @@ public class LikePostRepositoryTest {
     private TestEntityManager entityManager;
 
     @Autowired
-    private UserRepository repository;
+    private LikePostRepository repository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private BlogPostRepository blogPostRepository;
 
     private User user;
     private BlogPost blogPost;
@@ -42,7 +52,18 @@ public class LikePostRepositoryTest {
 
         likePost = new LikePost();
         likePost.setUser(user);
-        likePost.setPost(blogPost);;
+        likePost.setPost(blogPost);
+
+        userRepository.save(user);
+        blogPostRepository.save(blogPost);
 	}
 
+    @Test
+    public void shouldFindOneLikePostIfRepositoryContainsOneLikePostEntity() {
+        LikePost persistedLikePost = entityManager.persist(likePost);
+        List<LikePost> likePosts = repository.findAll();
+
+        Assert.assertThat(likePosts, Matchers.hasSize(1));
+        Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(persistedLikePost.getUser()));
+    }
 }
