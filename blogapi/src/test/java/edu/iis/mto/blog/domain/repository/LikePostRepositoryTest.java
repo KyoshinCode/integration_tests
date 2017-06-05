@@ -2,8 +2,12 @@ package edu.iis.mto.blog.domain.repository;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
- 
+
+import static org.junit.Assert.*;
+
 import java.util.List;
+import java.util.Optional;
+
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
