@@ -66,4 +66,12 @@ public class LikePostRepositoryTest {
         Assert.assertThat(likePosts, Matchers.hasSize(1));
         Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(persistedLikePost.getUser()));
     }
+
+    @Test
+    public void shouldFindNoLikePostIfRepositoryIsEmpty() {
+
+    	List<LikePost> likePosts = repository.findAll();
+
+        Assert.assertThat(likePosts, Matchers.hasSize(0));
+    }
 }
