@@ -32,6 +32,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Nowak");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -68,5 +69,14 @@ public class UserRepositoryTest {
 
     	Assert.assertThat(users, Matchers.hasSize(1));
     	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo(persistedUser.getFirstName()));
+    }
+
+    @Test
+    public void shouldFindUserByLastName(){
+    	User persistedUser = entityManager.persist(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", user.getLastName(), "");
+
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getLastName(), Matchers.equalTo(persistedUser.getLastName()));
     }
 }
