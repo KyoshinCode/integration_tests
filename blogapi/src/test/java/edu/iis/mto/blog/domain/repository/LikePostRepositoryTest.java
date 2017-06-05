@@ -2,12 +2,18 @@ package edu.iis.mto.blog.domain.repository;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
+import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
+
+import java.util.List;
 
 /**
  * Created by Wojciech Szczepaniak on 23.05.2017.
@@ -15,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class LikePostRepositoryTest {
-    @Autowired private LikePostRepository repository;
+    @Autowired private LikePostRepository likePostRepository;
     @Autowired private UserRepository userRepository;
     @Autowired private BlogPostRepository blogPostRepository;
 
@@ -26,6 +32,33 @@ public class LikePostRepositoryTest {
     public void setUp() {
         createMockUser();
         createMockBlogPostBy(user);
+    }
+
+    @Test
+    public void afterSaveElementRepositoryHaveThisElement() {
+        // given
+        userRepository.save(user);
+        blogPostRepository.save(post);
+
+        // when
+        LikePost likePost = prepareLikePost(post, user);
+        likePostRepository.save(likePost);
+
+        // than
+        List<LikePost> likePosts = likePostRepository.findAll();
+        Assert.assertThat(likePosts, Matchers.hasSize(1));
+        Assert.assertThat(likePosts.get(0).getPost(), Matchers.equalTo(likePost.getPost()));
+        Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(likePost.getUser()));
+        Assert.assertThat(likePosts.get(0), Matchers.equalTo(likePost));
+    }
+
+    private LikePost prepareLikePost(BlogPost post, User user) {
+        LikePost like = new LikePost();
+        like.setId(1L);
+        like.setPost(post);
+        like.setUser(user);
+
+        return like;
     }
 
     private void createMockBlogPostBy(User user) {
