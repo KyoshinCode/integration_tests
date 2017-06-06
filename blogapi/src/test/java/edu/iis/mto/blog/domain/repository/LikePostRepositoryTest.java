@@ -147,6 +147,28 @@ public class LikePostRepositoryTest {
         assertThat(returned.orElse(null), equalTo(likePost));
     }
 
+    @Test
+    public void findByUserAndPostSearchNonExistElementInRepository() {
+        // given
+        userRepository.save(user);
+        blogPostRepository.save(post);
+
+        User otherUser = createUser("Test", "test", "test@o2.pl");
+        userRepository.save(otherUser);
+        BlogPost otherPost = createMockBlogPostBy(otherUser);
+        blogPostRepository.save(otherPost);
+        LikePost otherLikePost = createLikePost(otherPost, otherUser);
+        likePostRepository.save(otherLikePost);
+        otherPost.getLikes().add(otherLikePost);
+        blogPostRepository.save(otherPost);
+
+        // when
+        Optional<LikePost> returned = likePostRepository.findByUserAndPost(user, post);
+
+        // then
+        assertThat(returned.orElse(null), equalTo(null));
+    }
+
     private LikePost createLikePost(BlogPost post, User user) {
         LikePost like = new LikePost();
         like.setPost(post);
