@@ -57,6 +57,8 @@ public class BlogManagerTest {
     private User likingUser;
     
     private BlogPost blogPost;
+    
+    private Optional<LikePost> existingLikeForPostFake;
 
 	@Before
 	public void setUp() {
@@ -73,6 +75,11 @@ public class BlogManagerTest {
 		blogPost = new BlogPost();
 		blogPost.setId(3L);
 		blogPost.setUser(postingUser);
+		
+		Mockito.when(userRepository.findOne(postingUser.getId())).thenReturn(postingUser);
+        Mockito.when(userRepository.findOne(likingUser.getId())).thenReturn(likingUser);
+    	Mockito.when(blogPostRepository.findOne(blogPost.getId())).thenReturn(blogPost);
+    	existingLikeForPostFake = Optional.empty();
 	}
 
     @Test
@@ -86,11 +93,13 @@ public class BlogManagerTest {
    }
    @Test(expected = DomainError.class)
    public void shouldThrowDomainErrorExceptionIfNewUserTryToLikePost() {
-        Mockito.when(userRepository.findOne(postingUser.getId())).thenReturn(postingUser);
-        Mockito.when(userRepository.findOne(likingUser.getId())).thenReturn(likingUser);
-    	Mockito.when(blogPostRepository.findOne(blogPost.getId())).thenReturn(blogPost);
-    	Optional<LikePost> existingLikeForPostFake = Optional.empty();
+        
     	Mockito.when(likePostRepository.findByUserAndPost(likingUser, blogPost)).thenReturn(existingLikeForPostFake);
     	blogService.addLikeToPost(likingUser.getId(), blogPost.getId());
+   }
+   @Test(expected = DomainError.class)
+   public void shouldThrowDomainErrorExceptionIfUserTryToLikeHisOwnPost() {
+    	Mockito.when(likePostRepository.findByUserAndPost(postingUser, blogPost)).thenReturn(existingLikeForPostFake);
+    	blogService.addLikeToPost(postingUser.getId(), blogPost.getId());
    }
 }
