@@ -43,6 +43,9 @@ public class BlogManager extends DomainService implements BlogService {
         if (post.getUser().getId().equals(userId)) {
             throw new DomainError("cannot like own post");
         }
+        if (!user.getAccountStatus().equals(AccountStatus.CONFIRMED)) {
+            throw new DomainError("Domain Error, user not CONFIRMED!");
+        }
         Optional<LikePost> existingLikeForPost = likePostRepository.findByUserAndPost(user, post);
         if (existingLikeForPost.isPresent()) {
             return false;

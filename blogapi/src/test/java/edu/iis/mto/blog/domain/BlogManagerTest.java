@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
@@ -98,6 +99,17 @@ public class BlogManagerTest {
         Mockito.when(userRepository.findOne(userConfirmed.getId())).thenReturn(userConfirmed);
         Mockito.when(likeRepository.findByUserAndPost(userConfirmed, blogPost)).thenReturn(emptyLikesList);
 
-        Assert.assertTrue(blogService.addLikeToPost(userConfirmed.getId(), blogPost.getId()));
+        Assert.assertThat(blogService.addLikeToPost(userConfirmed.getId(), blogPost.getId()), Matchers.equalTo(true));
     }
+
+    @Test(expected = DomainError.class)
+    public void userNewShouldNotAddLikePost() {
+    	Optional<LikePost> emptyLikesList = Optional.empty();
+
+        Mockito.when(userRepository.findOne(userNew.getId())).thenReturn(userNew);
+        Mockito.when(likeRepository.findByUserAndPost(userNew, blogPost)).thenReturn(emptyLikesList);
+
+        Assert.assertThat(blogService.addLikeToPost(userNew.getId(), blogPost.getId()), Matchers.equalTo(true));
+    }
+
 }
