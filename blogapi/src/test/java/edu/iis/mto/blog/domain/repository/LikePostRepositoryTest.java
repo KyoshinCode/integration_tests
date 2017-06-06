@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Created by Patryk Wierzyński.
@@ -24,60 +25,69 @@ import java.util.List;
 @DataJpaTest
 public class LikePostRepositoryTest {
 
-	@Autowired
-	protected UserRepository userRepository;
+    @Autowired
+    protected UserRepository userRepository;
 
-	@Autowired
-	protected BlogPostRepository blogPostRepository;
+    @Autowired
+    protected BlogPostRepository blogPostRepository;
 
-	@Autowired
-	protected LikePostRepository likePostRepository;
+    @Autowired
+    protected LikePostRepository likePostRepository;
 
-	private User user;
-	private BlogPost blogPost;
-	private LikePost likePost;
+    private User user;
+    private BlogPost blogPost;
+    private LikePost likePost;
 
-	@Before
-	public void setUp() throws Exception {
-		user = new User();
-		user.setFirstName("Jan");
-		user.setEmail("john2@domain.com");
-		user.setAccountStatus(AccountStatus.CONFIRMED);
+    @Before
+    public void setUp() {
+        List<User> users = userRepository.findAll();
+        BlogPost blogPost = new BlogPost();
+        blogPost.setEntry("old entry");
+        blogPost.setUser(users.get(0));
+        blogPost.setId((long) 3);
+        blogPostRepository.save(blogPost);
 
+        List<BlogPost> blogPosts = blogPostRepository.findAll();
 
-		blogPost = new BlogPost();
-		blogPost.setEntry("post entry");
+        LikePost likePost = new LikePost();
+        likePost.setPost(blogPosts.get(0));
+        likePost.setUser(users.get(0));
+        likePost.setId(null);
+        likePostRepository.save(likePost);
+    }
 
-		likePost = new LikePost();
-		likePost.setUser(user);
-		likePost.setPost(blogPost);
-	}
+    @Test
+    public void shouldFindNoUsersIfRepositoryIsEmpty() {
+        likePostRepository.deleteAll();
+        List<LikePost> posts = likePostRepository.findAll();
 
-	// TODO: finish this test case!!!!
+        Assert.assertThat(posts, Matchers.hasSize(0));
+    }
 
-	@Test
-	public void shouldFindNoUsersIfRepositoryIsEmpty() {
-		likePostRepository.deleteAll();
-		List<LikePost> posts = likePostRepository.findAll();
+    @Test
+    public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
+        List<LikePost> posts = likePostRepository.findAll();
 
-		Assert.assertThat(posts, Matchers.hasSize(0));
-	}
+        Assert.assertThat(posts, Matchers.hasSize(1));
+    }
 
-	@Test
-	public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
-		likePostRepository.save(likePost);
+    @Test
+    public void shouldModifyPostEntry() {
+        List<LikePost> likePosts = likePostRepository.findAll();
+        String newEntry = "new blog post entry";
+        likePosts.get(0).getPost().setEntry(newEntry);
 
-		List<LikePost> posts = likePostRepository.findAll();
+        Assert.assertThat(likePosts.get(0).getPost().getEntry(), Matchers.equalTo(newEntry));
+    }
 
-		Assert.assertThat(posts, Matchers.hasSize(1));
-//		Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
-	}
+    @Test
+    public void shouldFindLikePostByUserAndPost() {
+        List<BlogPost> blogPosts = blogPostRepository.findAll();
+        List<User> users = userRepository.findAll();
+        Optional<LikePost> likePost = likePostRepository.findByUserAndPost(users.get(0), blogPosts.get(0));
+        List<LikePost> likePosts = likePostRepository.findAll();
 
-	@Test
-	public void shouldStoreANewUser() {
-//		User persistedUser = likePostRepository.save(user);
-
-//		Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
-	}
+        Assert.assertThat(likePost.get(), Matchers.equalTo(likePosts.get(0)));
+    }
 
 }
