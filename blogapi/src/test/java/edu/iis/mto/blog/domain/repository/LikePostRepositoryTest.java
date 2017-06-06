@@ -31,8 +31,8 @@ public class LikePostRepositoryTest {
 
     @Before
     public void setUp() {
-        createMockUser();
-        createMockBlogPostBy(user);
+        user = createMockUser();
+        post = createMockBlogPostBy(user);
     }
 
     @Test
@@ -42,18 +42,18 @@ public class LikePostRepositoryTest {
         blogPostRepository.save(post);
 
         // when
-        LikePost likePost = prepareLikePost(post, user);
+        LikePost likePost = createLikePost(post, user);
         likePostRepository.save(likePost);
         post.getLikes().add(likePost);
         blogPostRepository.save(post);
 
-        // than
+        // then
         List<LikePost> likePosts = likePostRepository.findAll();
         Assert.assertThat(likePosts, Matchers.hasSize(1));
         Assert.assertThat(likePosts.get(0), Matchers.equalTo(likePost));
     }
 
-    private LikePost prepareLikePost(BlogPost post, User user) {
+    private LikePost createLikePost(BlogPost post, User user) {
         LikePost like = new LikePost();
         like.setId(1L);
         like.setPost(post);
@@ -62,19 +62,25 @@ public class LikePostRepositoryTest {
         return like;
     }
 
-    private void createMockBlogPostBy(User user) {
-        post = new BlogPost();
+    private BlogPost createMockBlogPostBy(User user) {
+        BlogPost post = new BlogPost();
+
         post.setEntry("test");
         post.setId(1L);
         post.setUser(user);
         post.setLikes(new ArrayList<>());
+
+        return post;
     }
 
-    private void createMockUser() {
-        user = new User();
+    private User createMockUser() {
+        User user = new User();
+
         user.setFirstName("Jan");
         user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
+
+        return user;
     }
 }
