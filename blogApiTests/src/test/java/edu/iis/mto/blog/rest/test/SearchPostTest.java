@@ -1,6 +1,11 @@
 package edu.iis.mto.blog.rest.test;
 
 
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
+
+import java.util.List;
+
 import org.apache.http.HttpStatus;
 import org.hamcrest.Matchers;
 import org.json.JSONObject;
@@ -47,5 +52,19 @@ public class SearchPostTest extends FunctionalTests {
         Assert.assertThat(likesCount, Matchers.equalTo(2));
 	}
 
+    @Test
+    public void noRemovedUserFound() throws Exception {
+	    String users = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+	        		.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+	                .get("/blog/user/find?searchString=John").then().extract().asString();
+
+	    Assert.assertThat(users.contains("John"), Matchers.equalTo(true));
+
+	   	users = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+	     		.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+	             .get("/blog/user/find?searchString=Removed").then().extract().asString();
+
+	   	Assert.assertThat(users.contains("Removed"), Matchers.equalTo(false));
+    }
 }
 
