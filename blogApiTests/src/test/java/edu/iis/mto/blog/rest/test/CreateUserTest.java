@@ -16,4 +16,12 @@ public class CreateUserTest extends FunctionalTests {
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
                 .post("/blog/user");
     }
+
+    @Test
+    public void emailFieldMustBeUnique() throws Exception {
+        JSONObject jsonObject = new JSONObject().put("email", "john@domain.com").put("firstName", "Jan").put("lastName", "Bliski");
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObject.toString()).expect().log().all().statusCode(HttpStatus.SC_CONFLICT).when()
+                .post("/blog/user");
+    }
 }
