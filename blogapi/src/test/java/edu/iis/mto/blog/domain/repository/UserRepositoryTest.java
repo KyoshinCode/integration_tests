@@ -28,6 +28,7 @@ public class UserRepositoryTest {
 
     @Before
     public void setUp() {
+        repository.deleteAll();
         user = new User();
         user.setFirstName("Jan");
         user.setEmail("john@domain.com");
