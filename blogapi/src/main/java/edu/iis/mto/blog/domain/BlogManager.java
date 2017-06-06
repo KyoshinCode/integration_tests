@@ -31,6 +31,9 @@ public class BlogManager extends DomainService implements BlogService {
     public Long createPost(Long userId, PostRequest postRequest) {
         User user = userRepository.findOne(userId);
         BlogPost post = mapper.mapToEntity(postRequest);
+        if (user.getAccountStatus() != AccountStatus.CONFIRMED) {
+        	throw new DomainError("adding like to post is only for confirmed users");
+        }
         post.setUser(user);
         blogPostRepository.save(post);
         return post.getId();
@@ -42,6 +45,9 @@ public class BlogManager extends DomainService implements BlogService {
         BlogPost post = blogPostRepository.findOne(postId);
         if (post.getUser().getId().equals(userId)) {
             throw new DomainError("cannot like own post");
+        }
+        if (user.getAccountStatus() != AccountStatus.CONFIRMED) {
+        	throw new DomainError("adding like to post is only for confirmed users");
         }
         Optional<LikePost> existingLikeForPost = likePostRepository.findByUserAndPost(user, post);
         if (existingLikeForPost.isPresent()) {

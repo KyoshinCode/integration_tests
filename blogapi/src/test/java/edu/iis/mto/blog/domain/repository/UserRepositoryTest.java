@@ -32,22 +32,24 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Nowak");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
-
+    	
         List<User> users = repository.findAll();
 
         Assert.assertThat(users, Matchers.hasSize(0));
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
+    	repository.deleteAll();
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
@@ -55,7 +57,7 @@ public class UserRepositoryTest {
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
-    @Ignore
+//    @Ignore
     @Test
     public void shouldStoreANewUser() {
 
@@ -64,4 +66,48 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldFindOneUserByFirstName() {
+    	
+    	User persistedUser = repository.save(user);
+    	
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
+    }
+    
+    @Test 
+    public void shouldFindOneUserByLastName() {
+    	
+    	User persistedUser = repository.save(user);
+    	
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "Nowak", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getLastName(), Matchers.equalTo("Nowak"));
+    }
+    
+    @Test
+    public void shouldFindOneUserByFirstNameUpercases() {
+    	
+    	User persistedUser = repository.save(user);
+    	
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JAN", "", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
+    }
+    
+    @Test
+    public void shouldNotFindUser() {
+    	
+    	repository.save(user);
+    	
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Piotr", "Piotr", "Piotr");
+    	Assert.assertThat(users, Matchers.hasSize(0));
+    	
+    }
+    
+    
 }

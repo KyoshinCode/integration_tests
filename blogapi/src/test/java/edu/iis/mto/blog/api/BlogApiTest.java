@@ -1,15 +1,20 @@
 package edu.iis.mto.blog.api;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -52,6 +57,32 @@ public class BlogApiTest {
 
     private String writeJson(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writer().writeValueAsString(obj);
+    }
+    
+    
+    @Test 
+    public void dataIntegirtyViolationExceptionShouldGenerate409Status() throws Exception {
+    	
+    	UserRequest user = new UserRequest();
+    	user.setEmail("g@tes.com");
+    	user.setFirstName("Bill");
+    	user.setLastName("Gates");
+    	
+    	Mockito.when(blogService.createUser(user)).thenThrow(DataIntegrityViolationException.class);
+    	String content = writeJson(user);
+    	
+    	mvc.perform(post("/blog/user")
+    			.contentType(MediaType.APPLICATION_JSON_UTF8)
+    			.content(content))
+    			.andExpect(status().isConflict());
+    }
+    
+    
+    @Test
+    public void getNotExistingDataShouldGenerate404Status() throws Exception {
+    	
+    	Mockito.when(finder.getUserData(15L)).thenThrow(new EntityNotFoundException());
+    	mvc.perform(get("/blog/user/15").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
     }
 
 }
