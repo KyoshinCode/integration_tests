@@ -87,4 +87,14 @@ public class UserRepositoryTest {
         List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, secondName, user.getEmail());
         Assert.assertThat(users, Matchers.hasSize(1));
     }
+
+    @Test
+    public void shouldNotFindAnyCorrectUser() {
+        String firstName = "Adam";
+        String secondName = "Rezner";
+        String email = "adam@mail.com";
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, secondName, email);
+        Assert.assertThat(users, Matchers.hasSize(0));
+    }
 }
