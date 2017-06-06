@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -43,12 +44,12 @@ public class LikePostRepositoryTest {
         // when
         LikePost likePost = prepareLikePost(post, user);
         likePostRepository.save(likePost);
+        post.getLikes().add(likePost);
+        blogPostRepository.save(post);
 
         // than
         List<LikePost> likePosts = likePostRepository.findAll();
         Assert.assertThat(likePosts, Matchers.hasSize(1));
-        Assert.assertThat(likePosts.get(0).getPost(), Matchers.equalTo(likePost.getPost()));
-        Assert.assertThat(likePosts.get(0).getUser(), Matchers.equalTo(likePost.getUser()));
         Assert.assertThat(likePosts.get(0), Matchers.equalTo(likePost));
     }
 
@@ -66,6 +67,7 @@ public class LikePostRepositoryTest {
         post.setEntry("test");
         post.setId(1L);
         post.setUser(user);
+        post.setLikes(new ArrayList<>());
     }
 
     private void createMockUser() {
