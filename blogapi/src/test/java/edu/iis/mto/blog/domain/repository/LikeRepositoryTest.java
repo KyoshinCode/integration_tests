@@ -82,4 +82,14 @@ public class LikeRepositoryTest {
 
         Assert.assertThat(likes.isPresent(), Matchers.equalTo(false));
     }
+    @Test
+ 	public void shouldFindLikesWhileUserAndPostAreCorrect() {
+        userRepository.save(user);
+        blogPostRepository.save(blogPost);
+        likePostRepository.save(likePost);
+
+        Optional<LikePost> likes = likePostRepository.findByUserAndPost(user, blogPost);
+
+        Assert.assertThat(likes.isPresent(), Matchers.equalTo(true));
+    }
 }
