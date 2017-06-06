@@ -1,8 +1,11 @@
 package edu.iis.mto.blog.api;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import javax.persistence.EntityNotFoundException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -60,7 +63,7 @@ public class BlogApiTest {
     }
 
     @Test
-    public void dataIntegrityViolationExceptionShouuldReturnStatus409() throws Exception {
+    public void dataIntegrityViolationExceptionShouldReturnStatus409() throws Exception {
 
         Mockito.when(blogService.createUser(user))
         	.thenThrow(new DataIntegrityViolationException("DataIntegrityViolationException"));
@@ -68,6 +71,14 @@ public class BlogApiTest {
 
         mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
                 .accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andExpect(status().isConflict());
+    }
+
+    @Test
+    public void missingUserShouldReturnStatus404() throws Exception {
+        Long userId = 5L;
+        Mockito.when(finder.getUserData(userId)).thenThrow(new EntityNotFoundException());
+
+        mvc.perform(get("/blog/user/{id}",userId)).andExpect(status().isNotFound());
     }
 
     private String writeJson(Object obj) throws JsonProcessingException {
