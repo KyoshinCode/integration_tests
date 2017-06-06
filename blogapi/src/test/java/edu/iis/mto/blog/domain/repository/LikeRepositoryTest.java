@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -74,6 +75,20 @@ public class LikeRepositoryTest {
 		
 		assertThat(post.getLikes(), hasSize(1));
 		assertThat(post.getLikes().get(0).getId(), is(equalTo(likePost.getId())));
+	}
+	
+	@Test
+	public void shouldFindLikePostByUser() {
+		LikePost likePost = new LikePost();
+		likePost.setPost(post);
+		likePost.setUser(secondUser);
+		likePost = likePostRepository.save(likePost);
+		
+		entityManager.refresh(post);
+		LikePost foundLikePost = likePostRepository.findByUserAndPost(secondUser, post).get();
+		
+		assertThat(foundLikePost, notNullValue());
+		assertThat(foundLikePost.getId(), is(equalTo(likePost.getId())));
 	}
 	
 }
