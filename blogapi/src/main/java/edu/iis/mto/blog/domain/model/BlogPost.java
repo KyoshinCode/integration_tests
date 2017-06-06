@@ -56,4 +56,14 @@ public class BlogPost extends BaseEntity {
         return serialVersionUID;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BlogPost post = (BlogPost) o;
+
+        if (!user.equals(post.user)) return false;
+        return entry.equals(post.entry);
+    }
 }

@@ -33,4 +33,14 @@ public class LikePost extends BaseEntity {
         this.post = post;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        LikePost likePost = (LikePost) o;
+
+        if (!user.equals(likePost.user)) return false;
+        return post.equals(likePost.post);
+    }
 }
