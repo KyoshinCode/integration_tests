@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
@@ -104,6 +105,19 @@ public class LikePostRepositoryTest {
         post = likePostRepository.findAll().get(0);
         assertThat(post.getPost(), not(equalTo(post)));
         assertThat(post.getPost(), equalTo(otherPost));
+    }
+
+    @Test
+    public void findByUserAndPostSearchInEmptyRepository() {
+        // given
+        userRepository.save(user);
+        blogPostRepository.save(post);
+
+        // when
+        Optional<LikePost> returned = likePostRepository.findByUserAndPost(user, post);
+
+        // then
+        assertThat(returned.orElse(null), equalTo(null));
     }
 
     private LikePost createLikePost(BlogPost post, User user) {
