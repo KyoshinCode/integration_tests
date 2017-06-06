@@ -1,5 +1,6 @@
 package edu.iis.mto.blog.domain;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -40,6 +41,11 @@ public class BlogManager extends DomainService implements BlogService {
     public boolean addLikeToPost(Long userId, Long postId) {
         User user = userRepository.findOne(userId);
         BlogPost post = blogPostRepository.findOne(postId);
+        List<User> foundUsers = userRepository.findAll();
+    		
+        System.out.println("hello");
+        System.out.println("found users: " + foundUsers);    
+        System.out.println("user: " + user.getLastName() + ", post: " + post.getEntry());
         if (post.getUser().getId().equals(userId)) {
             throw new DomainError("cannot like own post");
         }

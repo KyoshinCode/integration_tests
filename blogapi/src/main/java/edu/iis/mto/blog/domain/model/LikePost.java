@@ -21,16 +21,18 @@ public class LikePost extends BaseEntity {
         return user;
     }
 
-    public void setUser(User user) {
+    public LikePost setUser(User user) {
         this.user = user;
+        return this;
     }
 
     public BlogPost getPost() {
         return post;
     }
 
-    public void setPost(BlogPost post) {
+    public LikePost setPost(BlogPost post) {
         this.post = post;
+        return this;
     }
 
 }
