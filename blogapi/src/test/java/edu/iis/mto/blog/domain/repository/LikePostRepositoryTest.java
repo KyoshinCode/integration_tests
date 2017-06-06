@@ -79,6 +79,33 @@ public class LikePostRepositoryTest {
         assertThat(post.getUser(), equalTo(otherUser));
     }
 
+    @Test
+    public void modificatePostTest() {
+        // given
+        // Prepare repositories.
+        userRepository.save(user);
+        blogPostRepository.save(post);
+        LikePost likePost = createLikePost(post, user);
+        likePostRepository.save(likePost);
+        post.getLikes().add(likePost);
+        blogPostRepository.save(post);
+
+        LikePost post = likePostRepository.findAll().get(0);
+
+        // when
+        User otherUser = createUser("Wojtek", "XYZ", "a@w.pl");
+        BlogPost otherPost = createMockBlogPostBy(otherUser);
+        userRepository.save(otherUser);
+        blogPostRepository.save(otherPost);
+        post.setPost(otherPost);
+        likePostRepository.save(post);
+
+        // then
+        post = likePostRepository.findAll().get(0);
+        assertThat(post.getPost(), not(equalTo(post)));
+        assertThat(post.getPost(), equalTo(otherPost));
+    }
+
     private LikePost createLikePost(BlogPost post, User user) {
         LikePost like = new LikePost();
         like.setPost(post);
