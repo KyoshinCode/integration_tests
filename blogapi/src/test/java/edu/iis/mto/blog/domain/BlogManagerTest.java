@@ -1,11 +1,5 @@
 package edu.iis.mto.blog.domain;
 
-import static org.mockito.Mockito.times;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.is;
-
-import java.util.List;
 import java.util.Optional;
 
 import org.hamcrest.Matchers;
@@ -20,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import edu.iis.mto.blog.api.request.PostRequest;
 import edu.iis.mto.blog.api.request.UserRequest;
 import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.AccountStatus;
@@ -93,7 +86,6 @@ public class BlogManagerTest {
    }
    @Test(expected = DomainError.class)
    public void shouldThrowDomainErrorExceptionIfNewUserTryToLikePost() {
-        
     	Mockito.when(likePostRepository.findByUserAndPost(likingUser, blogPost)).thenReturn(existingLikeForPostFake);
     	blogService.addLikeToPost(likingUser.getId(), blogPost.getId());
    }
@@ -102,4 +94,9 @@ public class BlogManagerTest {
     	Mockito.when(likePostRepository.findByUserAndPost(postingUser, blogPost)).thenReturn(existingLikeForPostFake);
     	blogService.addLikeToPost(postingUser.getId(), blogPost.getId());
    }
+   public void shouldAddLikeToPost() {
+	   likingUser.setAccountStatus(AccountStatus.CONFIRMED);
+	   Mockito.when(likePostRepository.findByUserAndPost(likingUser, blogPost)).thenReturn(existingLikeForPostFake);
+	   Assert.assertThat(blogService.addLikeToPost(likingUser.getId(), blogPost.getId()), Matchers.is(true));
+  }
 }
