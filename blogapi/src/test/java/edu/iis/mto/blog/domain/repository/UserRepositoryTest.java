@@ -30,13 +30,13 @@ public class UserRepositoryTest {
 
     @Before
     public void setUp() {
+    	repository.deleteAll();
         user = new User();
         user.setFirstName("Jan");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
 
-    @Ignore
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
 
@@ -45,7 +45,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(0));
     }
 
-    @Ignore
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
         User persistedUser = entityManager.persist(user);
@@ -55,7 +54,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
-    @Ignore
     @Test
     public void shouldStoreANewUser() {
 
@@ -63,5 +61,47 @@ public class UserRepositoryTest {
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
+    
+    @Test
+    public void shouldFindExistingUser(){
+    	entityManager.persist(user);
 
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(user.getFirstName(), "", user.getEmail());
+    	Assert.assertTrue(foundUsers.contains(user));
+    }
+    
+    @Test
+    public void shouldFindExistingUserLowerCase(){
+    	entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("john", "", "john@domain.com");
+    	Assert.assertTrue(foundUsers.contains(user));
+    }
+    
+    @Test
+    public void shouldFindExistingUserUpperCase(){
+    	entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JOHN", "", "JOHN@DOMAIN.COM");
+    	Assert.assertTrue(foundUsers.contains(user));
+    }
+    
+    @Test
+    public void shouldNotFindUser(){
+    	entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("JOHN", "", "JOHNE@DOMAIN.COM");
+    	Assert.assertFalse(foundUsers.contains(user));
+    }
+    
+    @Test
+    public void shouldFindExistingUserByEmail(){
+    	entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "", "john@domain.com");
+    	Assert.assertTrue(foundUsers.contains(user));
+    }
+    
+    @Test
+    public void shouldFindExistingUserByFirstName(){
+    	entityManager.persist(user);
+    	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("jan", "", "");
+    	Assert.assertTrue(foundUsers.contains(user));
+    }
 }
