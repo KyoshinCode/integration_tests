@@ -1,5 +1,6 @@
 package edu.iis.mto.blog.domain;
 
+import edu.iis.mto.blog.domain.repository.BlogPostRepository;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +26,9 @@ public class BlogManagerTest {
     @MockBean
     UserRepository userRepository;
 
+    @MockBean
+    BlogPostRepository blogPostRepository;
+
     @Autowired
     DataMapper dataMapper;
 
@@ -39,5 +43,7 @@ public class BlogManagerTest {
         User user = userParam.getValue();
         Assert.assertThat(user.getAccountStatus(), Matchers.equalTo(AccountStatus.NEW));
     }
+
+
 
 }
