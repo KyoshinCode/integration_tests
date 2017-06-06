@@ -61,4 +61,12 @@ public class UserRepositoryTest {
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void shouldFindCorrectUserIfOnlySecondNameIsCorrect() {
+        String name = "Adam";
+        String email = "adam@mail.com";
+        repository.save(user);
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(name, user.getLastName(), email);
+        Assert.assertThat(users, Matchers.hasSize(1));
+       }
 }
