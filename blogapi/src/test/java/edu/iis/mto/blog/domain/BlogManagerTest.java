@@ -73,5 +73,24 @@ public class BlogManagerTest {
     	
     	assertThat(blogService.addLikeToPost(2L, 1L), is(equalTo(true)));    	
     }
+    
+    @Test (expected = DomainError.class)
+    public void newUserCannotAddLikePost() {
+    	User postAuthor = new User();
+    	postAuthor.setId(1L);
+    	
+    	User likeAuthor = new User();
+    	likeAuthor.setId(2L);
+    	likeAuthor.setAccountStatus(AccountStatus.NEW);
+    	
+    	BlogPost blogPost = new BlogPost();
+    	blogPost.setUser(postAuthor);
+    	
+    	when(userRepository.findOne(2L)).thenReturn(likeAuthor);
+    	when(blogPostRepository.findOne(1L)).thenReturn(blogPost);
+    	when(likePostRepository.findByUserAndPost(likeAuthor, blogPost)).thenReturn(Optional.empty());
+    	
+    	blogService.addLikeToPost(2L, 1L);  	
+    }
 
 }
