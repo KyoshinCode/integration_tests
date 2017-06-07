@@ -32,11 +32,27 @@ public class LikePostRepositoryTest {
     
     List<LikePost> likePosts;
     List<BlogPost> blogPosts;
+    List<User> users;
     
     @Before
     public void setup() {
-    	likePosts = likePostRepository.findAll();
+    	users = userRepository.findAll();
+    	
+    	BlogPost blogPost = new BlogPost();
+    	blogPost.setEntry("blog pościk");
+    	blogPost.setId(1L);
+    	blogPost.setUser(users.get(0));
+    	blogPostRepository.save(blogPost);
+    	
     	blogPosts = blogPostRepository.findAll();
+    	
+    	LikePost likePost = new LikePost();
+    	likePost.setId(2L);
+    	likePost.setPost(blogPosts.get(0));
+    	likePost.setUser(users.get(0));
+    	likePostRepository.save(likePost);
+    	
+    	likePosts = likePostRepository.findAll();
     }
     
     @Test
@@ -55,7 +71,6 @@ public class LikePostRepositoryTest {
     
     @Test
     public void findByUserAndPostWorksCorrectly() {
-    	List<User> users = userRepository.findAll();
     	Optional<LikePost> likePost = likePostRepository.findByUserAndPost(users.get(0), blogPosts.get(0));
 
     	Assert.assertThat(likePosts.get(0), Matchers.equalTo(likePost.get()));

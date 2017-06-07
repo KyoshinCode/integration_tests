@@ -57,7 +57,6 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldStoreANewUser() {
-
         User persistedUser = repository.save(user);
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
