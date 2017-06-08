@@ -17,6 +17,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.persistence.EntityNotFoundException;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,6 +65,13 @@ public class BlogApiTest {
 				.contentType(MediaType.APPLICATION_JSON_UTF8)
 				.content(content))
 				.andExpect(status().isConflict());
+	}
+
+	@Test
+	public void getNonExistingUserDateReturns404Status() throws Exception {
+		Mockito.when(finder.getUserData(147L)).thenThrow(new EntityNotFoundException());
+		mvc.perform(get("/blog/user/147")
+				.accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
 	}
 
 	private String writeJson(Object obj) throws JsonProcessingException {
