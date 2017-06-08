@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain;
 
 import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
@@ -43,34 +44,33 @@ public class BlogManagerTest {
 	@Autowired
 	BlogService blogService;
 
-	User newUser;
-	User confUser;
+	User postUser;
+	User user;
 	BlogPost post;
 
 	@Before
 	public void setUp() {
-		newUser = new User();
-		newUser.setFirstName("Usr1");
-		newUser.setLastName("Asd");
-		newUser.setAccountStatus(AccountStatus.NEW);
-		newUser.setId(5L);
+		postUser = new User();
+		postUser.setFirstName("Usr1");
+		postUser.setLastName("Asd");
+		postUser.setAccountStatus(AccountStatus.CONFIRMED);
+		postUser.setId(5L);
 
 		post = new BlogPost();
 		post.setId(1L);
-		post.setUser(newUser);
+		post.setUser(postUser);
 		post.setEntry("post entry");
 
-		confUser = new User();
-		confUser.setFirstName("Usr2");
-		confUser.setLastName("Def");
-		confUser.setAccountStatus(AccountStatus.CONFIRMED);
-		confUser.setId(6L);
+		user = new User();
+		user.setFirstName("Usr2");
+		user.setLastName("Def");
+		user.setId(6L);
 
-		Mockito.when(userRepository.findOne(newUser.getId())).thenReturn(newUser);
-		Mockito.when(userRepository.findOne(confUser.getId())).thenReturn(confUser);
+		Mockito.when(userRepository.findOne(postUser.getId())).thenReturn(postUser);
+		Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
 		Mockito.when(blogRepository.findOne(post.getId())).thenReturn(post);
 		Optional<LikePost> list = Optional.empty();
-		Mockito.when(likeRepository.findByUserAndPost(confUser, post)).thenReturn(list);
+		Mockito.when(likeRepository.findByUserAndPost(user, post)).thenReturn(list);
 	}
 
 	@Test
@@ -84,9 +84,26 @@ public class BlogManagerTest {
 
 	@Test
 	public void confirmedUserCanLikePost() {
-		boolean result = blogService.addLikeToPost(confUser.getId(), post.getId());
+		user.setAccountStatus(AccountStatus.CONFIRMED);
+		boolean result = blogService.addLikeToPost(user.getId(), post.getId());
 
 		Assert.assertThat(result, Matchers.is(true));
+	}
+
+	@Test(expected = DomainError.class)
+	public void newUserCannotLikePost() {
+		user.setAccountStatus(AccountStatus.NEW);
+		boolean result = blogService.addLikeToPost(user.getId(), post.getId());
+
+		Assert.assertThat(result, Matchers.is(false));
+	}
+
+	@Test(expected = DomainError.class)
+	public void removedUserCannotLikePost() {
+		user.setAccountStatus(AccountStatus.REMOVED);
+		boolean result = blogService.addLikeToPost(user.getId(), post.getId());
+
+		Assert.assertThat(result, Matchers.is(false));
 	}
 
 }
