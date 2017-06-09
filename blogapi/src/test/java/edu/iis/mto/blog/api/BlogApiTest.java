@@ -4,6 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -14,6 +16,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,6 +71,15 @@ public class BlogApiTest {
     	
     	mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8)
     			.content(content)).andExpect(status().isConflict());
+    }
+    
+    @Test
+    public void downloadingDataOfNotExistingDataShouldGenerateResponseHTTP404Status() throws Exception {
+    	
+    	Long newUserId = 2L;
+    	
+    	Mockito.when(finder.getUserData(newUserId)).thenThrow(new EntityNotFoundException(String.format("user with id %d not exists", newUserId)));
+    	mvc.perform(get("/blog/user/2").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound());
     }
 
 }
