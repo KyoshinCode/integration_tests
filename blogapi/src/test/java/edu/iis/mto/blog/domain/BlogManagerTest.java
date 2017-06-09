@@ -2,6 +2,7 @@ package edu.iis.mto.blog.domain;
 
 import java.util.Optional;
 
+import edu.iis.mto.blog.domain.errors.DomainError;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -88,6 +89,24 @@ public class BlogManagerTest {
         Mockito.when(likeRepository.findByUserAndPost(second, post)).thenReturn(likes);
 
         Assert.assertThat(blogService.addLikeToPost(second.getId(), post.getId()), Matchers.equalTo(true));
+    }
+    
+    @Test(expected = DomainError.class)
+    public void userWithStatusNEWCannotLikePost() {
+        User third = new User();
+        third.setFirstName("Jarek");
+        third.setEmail("jarek@domain.com");
+        third.setAccountStatus(AccountStatus.NEW);
+        third.setId(2L);
+        
+        Optional<LikePost> likes = Optional.empty();
+
+        Mockito.when(userRepository.findOne(first.getId())).thenReturn(first);
+        Mockito.when(userRepository.findOne(third.getId())).thenReturn(third);
+        Mockito.when(blogRepository.findOne(post.getId())).thenReturn(post);
+        Mockito.when(likeRepository.findByUserAndPost(third, post)).thenReturn(likes);
+
+        blogService.addLikeToPost(2L, 23L);
     }
 
 }
