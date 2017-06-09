@@ -61,5 +61,40 @@ public class UserRepositoryTest {
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
+    
+    @Test
+    public void shouldFindUserWithGivenName() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
+    }
+    
+    @Test
+    public void shouldFindUserWithGivenEmail() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "", "john@domain.com");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo("john@domain.com"));
+    }
+    
+    @Test
+    public void shouldFindUserWithGivenNameButLowercase() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("jan", "", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
+    }
+    
+    @Test
+    public void shouldNotFindAnyUser() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("janek", "kowalski", "aaa@domain.com");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(0));
+    }
 
 }
