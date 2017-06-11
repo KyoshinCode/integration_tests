@@ -57,9 +57,15 @@ public class BlogApiTest {
     }
     
     @Test
-    public void shouldGenerate409ErrorWithConflictStatus() throws Exception {
+    public void invallidDataShouldGenerate409Error() throws Exception {
     	when(finder.getUserData(100L)).thenThrow(new DataIntegrityViolationException("data integrity violation"));
     	mvc.perform(get("/blog/user/100")).andExpect(status().isConflict());
+    }
+    
+    @Test
+    public void notExistingUserSearchShouldGenerate404Error() throws Exception {
+    	when(finder.getUserData(100L)).thenThrow(new EntityNotFoundException());
+    	mvc.perform(get("/blog/user/100")).andExpect(status().isNotFound());
     }
 
     private String writeJson(Object obj) throws JsonProcessingException {
