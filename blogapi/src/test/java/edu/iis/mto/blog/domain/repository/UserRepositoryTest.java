@@ -73,6 +73,21 @@ public class UserRepositoryTest {
     }
 
     @Test
+    public void shouldFindUserByFirstLetterOfName() throws Exception {
+        //given:
+        repository.deleteAll();
+        User persistedUser = entityManager.persist(user);
+        String FIRST_LETTER = "J";
+
+        //when:
+        List<User> results = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(FIRST_LETTER, EMPTY, EMPTY);
+
+        //then:
+        Assert.assertThat(persistedUser.getLastName(), equalTo(results.get(0).getLastName()));
+        Assert.assertThat(results, Matchers.hasSize(1));
+    }
+
+    @Test
     public void shouldFindOneUserInRepository() {
 
         List<User> users = repository.findAll();
