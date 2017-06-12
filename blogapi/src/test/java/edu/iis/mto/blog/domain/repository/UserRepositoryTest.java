@@ -58,6 +58,21 @@ public class UserRepositoryTest {
     }
 
     @Test
+    public void shouldFindUserByLastName() throws Exception {
+        //given:
+        repository.deleteAll();
+        User persistedUser = entityManager.persist(user);
+        String USER_SURNAME = "Kowalski";
+
+        //when:
+        List<User> results = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY, USER_SURNAME, EMPTY);
+
+        //then:
+        Assert.assertThat(persistedUser.getLastName(), equalTo(results.get(0).getLastName()));
+        Assert.assertThat(results, Matchers.hasSize(1));
+    }
+
+    @Test
     public void shouldFindOneUserInRepository() {
 
         List<User> users = repository.findAll();
