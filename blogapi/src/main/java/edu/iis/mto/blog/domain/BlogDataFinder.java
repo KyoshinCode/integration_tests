@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain;
 
 import java.util.List;
+import java.util.Iterator;
 import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
@@ -16,6 +17,7 @@ import edu.iis.mto.blog.domain.model.User;
 import edu.iis.mto.blog.dto.PostData;
 import edu.iis.mto.blog.dto.UserData;
 import edu.iis.mto.blog.services.DataFinder;
+
 
 @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
 @Service
@@ -34,7 +36,13 @@ public class BlogDataFinder extends DomainService implements DataFinder {
     public List<UserData> findUsers(String searchString) {
         List<User> users = userRepository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(
                 searchString, searchString, searchString);
-
+        Iterator<User> usersIterator = users.iterator();
+        while (usersIterator.hasNext()) {
+        	User u = usersIterator.next();
+        	if (u.getAccountStatus().equals(AccountStatus.REMOVED)) {
+        		usersIterator.remove();
+        	}
+        }
         return users.stream().map(user -> mapper.mapToDto(user)).collect(Collectors.toList());
     }
 
