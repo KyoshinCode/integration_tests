@@ -106,11 +106,11 @@ public class UserRepositoryTest {
     }
     
     @Test
-    public void shouldFindNoUserIfSearchDataDoesNotMathc() {
+    public void shouldFindNoUserIfSearchDataDoesNotMatch() {
     	repository.save(user);
     	
     	List<User> foundUsers = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase
-    			("Filip", "", "");
+    			("WrongName", "WrongLastName", "WrongEmail");
     	
     	for (User u : foundUsers) {
         	System.out.println(u.getFirstName() + " " + u.getLastName());
