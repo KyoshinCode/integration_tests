@@ -86,5 +86,21 @@ public class UserRepositoryTest {
     	
     	Assert.assertThat(users, Matchers.hasSize(1));
     }
+    
+    @Test
+    public void shouldFindUserByOneRightParameter() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "Kapibara", "Kapibara@awesome.com");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    }
+    
+    @Test
+    public void shouldNotFindUserByWrongInfo() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("John", "Kapibara", "Kapibara@awesome.com");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(0));
+    }
 
 }
