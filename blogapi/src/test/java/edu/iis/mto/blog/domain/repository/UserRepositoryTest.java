@@ -33,6 +33,7 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
+        user.setLastName("Kowalski");
         user.setEmail("john@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
@@ -66,6 +67,22 @@ public class UserRepositoryTest {
     public void shouldFindUserByName() {
     	repository.save(user);
     	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(user.getFirstName(), "", "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    }
+    
+    @Test
+    public void shouldFindUserBySurname() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", user.getLastName(), "");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(1));
+    }
+    
+    @Test
+    public void shouldFindUserByEmail() {
+    	repository.save(user);
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "", user.getEmail());
     	
     	Assert.assertThat(users, Matchers.hasSize(1));
     }
