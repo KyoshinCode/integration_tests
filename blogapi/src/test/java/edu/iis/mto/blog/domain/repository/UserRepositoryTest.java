@@ -2,6 +2,7 @@ package edu.iis.mto.blog.domain.repository;
 
 import java.util.List;
 
+import antlr.StringUtils;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Before;
@@ -16,10 +17,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.User;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.equalTo;
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class UserRepositoryTest {
 
+    public static final String EMPTY = "";
     @Autowired
     private TestEntityManager entityManager;
 
@@ -38,6 +43,21 @@ public class UserRepositoryTest {
     }
 
     @Test
+    public void shouldFindUserByEmail() throws Exception {
+        //given:
+        repository.deleteAll();
+        User persistedUser = entityManager.persist(user);
+        String USER_EMAIL = "mike@domain2.com";
+
+        //when:
+        List<User> results = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY, EMPTY, USER_EMAIL);
+
+        //then:
+        Assert.assertThat(persistedUser.getEmail(), equalTo(results.get(0).getEmail()));
+        Assert.assertThat(results, Matchers.hasSize(1));
+    }
+
+    @Test
     public void shouldFindOneUserInRepository() {
 
         List<User> users = repository.findAll();
@@ -51,7 +71,7 @@ public class UserRepositoryTest {
         List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(user.getFirstName(),user.getLastName(),user.getEmail());
 
         Assert.assertThat(users, Matchers.hasSize(1));
-        Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
+        Assert.assertThat(users.get(0).getEmail(), equalTo(persistedUser.getEmail()));
     }
 
     @Test
