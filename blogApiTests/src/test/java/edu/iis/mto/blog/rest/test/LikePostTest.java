@@ -50,4 +50,19 @@ public class LikePostTest extends FunctionalTests {
 
 		Assert.assertThat(likesCount, Matchers.equalTo(1));
 	}
+	
+	@Test
+	public void getUserPostsShouldReturnCorrectLikesCount() {
+		JSONObject jsonObj = new JSONObject().put("entry", "Post");
+		RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+			.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
+			.post("/blog/user/1/post");	
+		RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+			.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+			.post("/blog/user/3/like/1");
+		int likesCount = RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+				.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_OK).when()
+				.get("/blog/user/1/post").then().extract().jsonPath().getInt("likesCount[0]");
+		Assert.assertThat(likesCount, Matchers.equalTo(1));
+	}
 }
