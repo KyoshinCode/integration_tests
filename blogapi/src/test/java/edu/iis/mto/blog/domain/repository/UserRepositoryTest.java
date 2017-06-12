@@ -82,4 +82,14 @@ public class UserRepositoryTest {
 
         Assert.assertThat(users.get(0).getLastName(), Matchers.equalTo("Janowski"));
     }
+
+    @Test
+    public void shouldFindOneUserByEmail() {
+
+        User persistedUser = repository.save(user);
+
+        List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("", "", "mike@domain.com");
+
+        Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo("mike@domain.com"));
+    }
 }
