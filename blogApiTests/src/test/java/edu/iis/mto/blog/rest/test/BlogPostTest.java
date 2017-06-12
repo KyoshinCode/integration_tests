@@ -24,5 +24,13 @@ public class BlogPostTest extends FunctionalTests {
 				.body(jsonObj2.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
 				.post("/blog/user/2/post");
 	}
+	
+	@Test
+	public void getRemovedUserPostShouldFail() {
+		JSONObject jsonObj = new JSONObject().put("entry", "Post");
+				RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+				.body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST).when()
+				.post("/blog/user/4/post");
+	}
 
 }
