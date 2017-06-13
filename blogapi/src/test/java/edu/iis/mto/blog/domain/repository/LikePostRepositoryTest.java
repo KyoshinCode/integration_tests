@@ -74,6 +74,15 @@ public class LikePostRepositoryTest {
 		Assert.assertThat(likePostList, Matchers.hasSize(1));
 	}
 	
-
+	@Test
+	public void shouldAddLikePost() {
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		LikePost persistedLikePost = likePostRepository.save(likePost);
+		entityManager.refresh(blogPost);
+		
+		Assert.assertThat(blogPost.getLikes().size(), Matchers.equalTo(1));
+		Assert.assertThat(persistedLikePost.getId(), Matchers.equalTo(blogPost.getId()));
+	}
 
 }
