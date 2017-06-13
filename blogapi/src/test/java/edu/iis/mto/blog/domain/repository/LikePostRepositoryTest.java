@@ -95,7 +95,44 @@ public class LikePostRepositoryTest {
 		Optional<LikePost> likePostListOpt = likePostRepository.findByUserAndPost(user,blogPost);
 		
 		Assert.assertThat(likePostListOpt.isPresent(), Matchers.equalTo(true));
-		Assert.assertThat(likePostListOpt.size(), Matchers.equalTo(1));
+		Assert.assertThat(blogPost.getLikes().size(), Matchers.equalTo(1));
+	}
+	
+	@Test
+	public void shouldNotFindLikesByUserAndFakePost() {
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		LikePost persistedLikePost = likePostRepository.save(likePost);
+		
+		BlogPost fakeBlogPost = new BlogPost();
+		fakeBlogPost = new BlogPost();
+		fakeBlogPost.setUser(user);
+		fakeBlogPost.setEntry("Fake post");
+		fakeBlogPost.setLikes(new ArrayList());
+		blogPostRepository.save(fakeBlogPost);
+		
+		Optional<LikePost> likePostListOpt = likePostRepository.findByUserAndPost(user,fakeBlogPost);
+		
+		Assert.assertThat(likePostListOpt.isPresent(), Matchers.equalTo(false));
+	}
+	
+	@Test
+	public void shouldNotFindLikesByFakeUserAndPost() {
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		LikePost persistedLikePost = likePostRepository.save(likePost);
+		
+
+		User fakeUser = new User();
+		fakeUser.setFirstName("John");
+		fakeUser.setLastName("Kapibara");
+		fakeUser.setEmail("Kapibara@awesome.com");
+		fakeUser.setAccountStatus(AccountStatus.NEW);
+		userRepository.save(fakeUser);
+		
+		Optional<LikePost> likePostListOpt = likePostRepository.findByUserAndPost(fakeUser,blogPost);
+		
+		Assert.assertThat(likePostListOpt.isPresent(), Matchers.equalTo(false));
 	}
 	
 	
