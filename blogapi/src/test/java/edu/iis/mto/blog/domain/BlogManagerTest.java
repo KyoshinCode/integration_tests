@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import edu.iis.mto.blog.api.request.PostRequest;
 import edu.iis.mto.blog.api.request.UserRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.User;
@@ -77,4 +78,29 @@ public class BlogManagerTest {
         Assert.assertThat(userParam.getAllValues().get(1).getAccountStatus(), is(equalTo(AccountStatus.CONFIRMED)));
         Assert.assertThat(service.addLikeToPost(userParam.getAllValues().get(1).getId(), blogPostParam.getValue().getId()), is(equalTo(true)));
 	}
+    
+    @Test(expected = DomainError.class)
+    public void verifyIfUnconfirmUserCanLike() {
+        blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
+        blogService.createUser(new UserRequest("Johnny", "Kapibara", "kapibara@awesome.com"));
+        
+        ArgumentCaptor<User> userParam = ArgumentCaptor.forClass(User.class);
+        Mockito.verify(userRepository, times(2)).save(userParam.capture());
+        
+        userParam.getAllValues().get(1).setAccountStatus(AccountStatus.NEW);
+        Mockito.verify(userRepository, times(2)).save(userParam.capture());
+        
+        blogService.createPost(userParam.getAllValues().get(1).getId(), new PostRequest());
+
+        ArgumentCaptor<BlogPost> blogPostParam = ArgumentCaptor.forClass(BlogPost.class);
+        Mockito.verify(blogPostRepository, times(1)).save(blogPostParam.capture());
+        
+        BlogService service = Mockito.spy(BlogService.class);
+        Mockito.when(service.addLikeToPost(userParam.getAllValues().get(1).getId(), blogPostParam.getValue().getId())).thenThrow(new DomainError("Domain error!"));
+        
+        
+        Assert.assertThat(userParam.getAllValues().get(1).getAccountStatus(), is(equalTo(AccountStatus.NEW)));
+        Assert.assertThat(service.addLikeToPost(userParam.getAllValues().get(1).getId(), blogPostParam.getValue().getId()), is(equalTo(true)));
+	}
+    
 }
