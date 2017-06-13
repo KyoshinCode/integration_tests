@@ -28,23 +28,22 @@ public class UserRepositoryTest {
 
     private User user;
 
+	private List<User> users;
+
     @Before
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
+        user.setEmail("johnas@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
-
     @Ignore
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
-
         List<User> users = repository.findAll();
-
+        
         Assert.assertThat(users, Matchers.hasSize(0));
     }
-
     @Ignore
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
@@ -54,8 +53,6 @@ public class UserRepositoryTest {
         Assert.assertThat(users, Matchers.hasSize(1));
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
-
-    @Ignore
     @Test
     public void shouldStoreANewUser() {
 
@@ -63,5 +60,47 @@ public class UserRepositoryTest {
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
-
+    @Test
+    public void shouldFindTwoUsersByLastName() {
+		users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("*", "Steward", "*");
+        final int testValue = 2;
+        
+		Assert.assertThat(users, Matchers.hasSize(testValue));
+    }
+    @Test
+    public void shouldFindOneUserByFirstName() {
+		users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Adam", "*", "*");
+		final int testValue = 1;
+		
+        Assert.assertThat(users, Matchers.hasSize(testValue));
+    }
+    
+    @Test
+    public void shouldNotFindAnyUserByEmail() {
+		users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("*", "*", "anyemail@anyaddress.com");
+        final int testValue = 0;
+        
+		Assert.assertThat(users, Matchers.hasSize(testValue));
+    }
+    @Test
+    public void shouldFindOneUserByFirstNamesFirstLetter() {
+		users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("p", "*", "*");
+        final int testValue = 1;
+        
+		Assert.assertThat(users, Matchers.hasSize(testValue));
+    }
+    @Test
+    public void shouldFindOneUserByLastNamesMiddleLetter() {
+    	users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("*", "v", "*");
+        final int testValue = 1;
+        
+		Assert.assertThat(users, Matchers.hasSize(testValue));
+    }
+    @Test
+    public void shouldFindAllUsersByPredicateInEmail() {
+		users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("*", "*", "domain");
+        final int testValue = 3;
+        
+		Assert.assertThat(users, Matchers.hasSize(testValue));
+    }
 }
