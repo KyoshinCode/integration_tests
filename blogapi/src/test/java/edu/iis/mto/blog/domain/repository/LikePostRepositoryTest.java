@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.hamcrest.Matchers;
 import org.junit.Assert;
@@ -84,5 +85,19 @@ public class LikePostRepositoryTest {
 		Assert.assertThat(blogPost.getLikes().size(), Matchers.equalTo(1));
 		Assert.assertThat(persistedLikePost.getId(), Matchers.equalTo(blogPost.getId()));
 	}
+	
+	@Test
+	public void shouldfindLikesByUserAndPost() {
+		userRepository.save(user);
+		blogPostRepository.save(blogPost);
+		LikePost persistedLikePost = likePostRepository.save(likePost);
+		
+		Optional<LikePost> likePostListOpt = likePostRepository.findByUserAndPost(user,blogPost);
+		
+		Assert.assertThat(likePostListOpt.isPresent(), Matchers.equalTo(true));
+		Assert.assertThat(likePostListOpt.size(), Matchers.equalTo(1));
+	}
+	
+	
 
 }
