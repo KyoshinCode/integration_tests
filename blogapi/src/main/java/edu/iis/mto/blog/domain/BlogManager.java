@@ -1,11 +1,5 @@
 package edu.iis.mto.blog.domain;
 
-import java.util.Optional;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import edu.iis.mto.blog.api.request.PostRequest;
 import edu.iis.mto.blog.api.request.UserRequest;
 import edu.iis.mto.blog.domain.errors.DomainError;
@@ -14,6 +8,11 @@ import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
 import edu.iis.mto.blog.services.BlogService;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
@@ -42,6 +41,9 @@ public class BlogManager extends DomainService implements BlogService {
         BlogPost post = blogPostRepository.findOne(postId);
         if (post.getUser().getId().equals(userId)) {
             throw new DomainError("cannot like own post");
+        }
+        if (user.getAccountStatus() != AccountStatus.CONFIRMED) {
+            throw new DomainError("must be confirmed user");
         }
         Optional<LikePost> existingLikeForPost = likePostRepository.findByUserAndPost(user, post);
         if (existingLikeForPost.isPresent()) {
