@@ -30,8 +30,9 @@ public class UserRepositoryTest {
     public void setUp() {
         repository.deleteAll();
         user = new User();
-        user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
+        user.setFirstName("Adam");
+        user.setLastName("Rezner");
+        user.setEmail("adam@mail.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
 
@@ -90,9 +91,9 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldNotFindAnyCorrectUser() {
-        String firstName = "Adam";
-        String secondName = "Rezner";
-        String email = "adam@mail.com";
+        String firstName = "Dominik";
+        String secondName = "Cieslak";
+        String email = "dominik@mail.com";
         repository.save(user);
         List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(firstName, secondName, email);
         Assert.assertThat(users, Matchers.hasSize(0));

@@ -64,7 +64,7 @@ public class BlogManagerTest {
         newUser.setFirstName("Marcin");
         newUser.setLastName("Marcinkowski");
         newUser.setEmail("marcin@mail.com");
-        newUser.setAccountStatus(AccountStatus.CONFIRMED);
+        newUser.setAccountStatus(AccountStatus.NEW);
         newUser.setId(124L);
         
         confirmedUser = new User();
