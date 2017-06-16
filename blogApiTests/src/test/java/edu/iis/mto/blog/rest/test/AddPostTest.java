@@ -18,4 +18,12 @@ public class AddPostTest extends FunctionalTests {
                 .body(jsonObject.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED)
                 .when().post("/blog/user/1/post");
     }
+
+    @Test
+    public void newUserCannotAddPost() {
+        JSONObject jsonObject = new JSONObject().put("entry", "Test 2");
+        RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(jsonObject.toString()).expect().log().all().statusCode(HttpStatus.SC_BAD_REQUEST)
+                .when().post("/blog/user/2/post");
+    }
 }
