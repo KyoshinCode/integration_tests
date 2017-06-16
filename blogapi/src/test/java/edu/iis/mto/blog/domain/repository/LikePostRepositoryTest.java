@@ -15,7 +15,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
+import java.util.Optional;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
@@ -95,5 +97,12 @@ public class LikePostRepositoryTest {
         assertThat(newPost, equalTo("new new"));
     }
 
-
+    @Test
+    public void shouldFindByUserAndPost() {
+        repository.save(user);
+        blogPostRepository.save(blogPost);
+        likePostRepository.save(likePost);
+        Optional<LikePost> likedPosts = likePostRepository.findByUserAndPost(user, blogPost);
+        assertThat(likedPosts.isPresent() , is(true));
+    }
 }
