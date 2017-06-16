@@ -60,11 +60,14 @@ public class LikePostRepositoryTest {
         likePost.setUser(user);
         likePost.setPost(blogPost);
 
+        repository.save(user);
+        blogPostRepository.save(blogPost);
+        likePostRepository.save(likePost);
     }
 
     @Test
     public void shouldNotFindLikePosts_repositoryEmpty() {
-        repository.save(user);
+        likePostRepository.deleteAll();
         List<LikePost> likePosts = likePostRepository.findAll();
 
         assertThat(likePosts, hasSize(0));
@@ -73,9 +76,6 @@ public class LikePostRepositoryTest {
     @Test
     public void shouldFindOneLikePost() {
 
-        repository.save(user);
-        blogPostRepository.save(blogPost);
-        likePostRepository.save(likePost);
         List<LikePost> likedPosts = likePostRepository.findAll();
 
         assertThat(likedPosts, hasSize(1));
@@ -84,9 +84,6 @@ public class LikePostRepositoryTest {
     @Test
     public void shouldModifyLikePost() {
 
-        repository.save(user);
-        blogPostRepository.save(blogPost);
-        likePostRepository.save(likePost);
         List<LikePost> likedPosts = likePostRepository.findAll();
 
         String oldPost = likedPosts.get(0).getPost().getEntry();
@@ -99,9 +96,7 @@ public class LikePostRepositoryTest {
 
     @Test
     public void shouldFindByUserAndPost() {
-        repository.save(user);
-        blogPostRepository.save(blogPost);
-        likePostRepository.save(likePost);
+
         Optional<LikePost> likedPosts = likePostRepository.findByUserAndPost(user, blogPost);
         assertThat(likedPosts.isPresent() , is(true));
     }
