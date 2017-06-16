@@ -16,6 +16,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.List;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.Assert.assertThat;
 
@@ -76,9 +77,23 @@ public class LikePostRepositoryTest {
         List<LikePost> likedPosts = likePostRepository.findAll();
 
         assertThat(likedPosts, hasSize(1));
-
     }
 
+    @Test
+    public void shouldModifyLikePost() {
+
+        repository.save(user);
+        blogPostRepository.save(blogPost);
+        likePostRepository.save(likePost);
+        List<LikePost> likedPosts = likePostRepository.findAll();
+
+        String oldPost = likedPosts.get(0).getPost().getEntry();
+        likedPosts.get(0).getPost().setEntry("new new");
+        String newPost = likedPosts.get(0).getPost().getEntry();
+
+        assertThat(oldPost, equalTo("new"));
+        assertThat(newPost, equalTo("new new"));
+    }
 
 
 }
