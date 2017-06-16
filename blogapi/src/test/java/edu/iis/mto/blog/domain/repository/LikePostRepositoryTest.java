@@ -1,6 +1,8 @@
 package edu.iis.mto.blog.domain.repository;
 
 import edu.iis.mto.blog.domain.model.BlogPost;
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,6 +65,18 @@ public class LikePostRepositoryTest {
         List<LikePost> likePosts = likePostRepository.findAll();
 
         assertThat(likePosts, hasSize(0));
+    }
+
+    @Test
+    public void shouldFindOneLikePost() {
+
+        repository.save(user);
+        blogPostRepository.save(blogPost);
+        likePostRepository.save(likePost);
+        List<LikePost> likedPosts = likePostRepository.findAll();
+
+        assertThat(likedPosts, hasSize(1));
+
     }
 
 
