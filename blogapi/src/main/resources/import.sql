@@ -8,3 +8,4 @@ insert into user (id, account_status, email, first_name) values (null, 'CONFIRME
 
 -- Test posts
 insert into blog_post (id, entry, user_id) values (null, 'Test post', 1);
+insert into blog_post (id, entry, user_id) values (null, 'Test post REMOVED user ', 3);
