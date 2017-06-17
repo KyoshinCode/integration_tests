@@ -49,14 +49,14 @@ public class BlogManagerTest {
     BlogPost blogPost;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         user = new User();
         user.setFirstName("Zbigniew");
         user.setEmail("zbigniew@interia.com");
         user.setAccountStatus(AccountStatus.CONFIRMED);
         user.setId(30L);
 
-        userWhoLikesPost =  new User();
+        userWhoLikesPost = new User();
         userWhoLikesPost.setId(31L);
         userWhoLikesPost.setFirstName("Czesław");
         userWhoLikesPost.setLastName("Miłosz");
@@ -69,6 +69,7 @@ public class BlogManagerTest {
         blogPost.setId(23L);
 
     }
+
     @Test
     public void creatingNewUserShouldSetAccountStatusToNEW() {
         blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
@@ -78,6 +79,14 @@ public class BlogManagerTest {
         Assert.assertThat(user.getAccountStatus(), Matchers.equalTo(AccountStatus.NEW));
     }
 
+    @Test
+    public void addingLikeToPostShouldUserWithAccountCONFIRMED() {
+        Mockito.when(userRepository.findOne(userWhoLikesPost.getId())).thenReturn(userWhoLikesPost);
+        Mockito.when(blogRepository.findOne(blogPost.getId())).thenReturn(blogPost);
+        Optional<LikePost> likes = Optional.empty();
+        Mockito.when(likeRepository.findByUserAndPost(userWhoLikesPost, blogPost)).thenReturn(likes);
+        Assert.assertThat(blogService.addLikeToPost(userWhoLikesPost.getId(), blogPost.getId()), Matchers.equalTo(true));
+    }
 
 
 }
