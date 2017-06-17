@@ -81,7 +81,18 @@ public class BlogManagerTest {
         Assert.assertThat(blogService.addLikeToPost(userWhoLikesPost.getId(), blogPost.getId()), Matchers.equalTo(true));
     }
 
-    
+
+    @Test(expected = DomainError.class)
+    public void addingLikeToPostShouldNotNewUser() throws Exception {
+        User newUser = createUser(32L, "Klaudia", "Kowalska", "klaudia@domain.com", AccountStatus.NEW);
+        Mockito.when(userRepository.findOne(user.getId())).thenReturn(user);
+        Mockito.when(userRepository.findOne(newUser.getId())).thenReturn(newUser);
+        Mockito.when(blogRepository.findOne(blogPost.getId())).thenReturn(blogPost);
+        Optional<LikePost> emptyLikesList = Optional.empty();
+        Mockito.when(likeRepository.findByUserAndPost(newUser, blogPost)).thenReturn(emptyLikesList);
+        Assert.assertThat(blogService.addLikeToPost(newUser.getId(), blogPost.getId()), Matchers.equalTo(true));
+
+    }
 
     private User createUser(Long id, String name, String surname, String email, AccountStatus accountStatus) {
         User newUser = new User();
