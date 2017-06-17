@@ -60,6 +60,7 @@ public class BlogManagerTest {
         List<User> users = userParam.getAllValues();
 
         // Dodaj post
+        when(userRepository.findOne(anyLong())).thenReturn(users.get(0));
         blogService.createPost(users.get(0).getId(), new PostRequest());
         ArgumentCaptor<BlogPost> postParam = ArgumentCaptor.forClass(BlogPost.class);
         verify(blogPostRepository).save(postParam.capture());
