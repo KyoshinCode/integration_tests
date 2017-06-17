@@ -86,4 +86,16 @@ public class BlogManagerTest {
         assertThat(user.getAccountStatus(), Matchers.equalTo(NEW));
     }
 
+
+    @Test(expected = DomainError.class)
+    public void newUserCanNotLikePosts() {
+        firstUser.setAccountStatus(NEW);
+        Mockito.when(userRepository.findOne(firstUser.getId())).thenReturn(firstUser);
+        Mockito.when(userRepository.findOne(secondUser.getId())).thenReturn(secondUser);
+        Mockito.when(blogRepository.findOne(blogPost.getId())).thenReturn(blogPost);
+        Optional<LikePost> list = Optional.empty();
+        Mockito.when(likeRepository.findByUserAndPost(secondUser, blogPost)).thenReturn(list);
+
+        assertThat(blogService.addLikeToPost(firstUser.getId(), blogPost.getId()), is(true));
+    }
 }
