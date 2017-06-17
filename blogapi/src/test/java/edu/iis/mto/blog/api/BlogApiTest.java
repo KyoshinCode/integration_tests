@@ -1,9 +1,11 @@
 package edu.iis.mto.blog.api;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -26,6 +28,8 @@ import edu.iis.mto.blog.dto.Id;
 import edu.iis.mto.blog.services.BlogService;
 import edu.iis.mto.blog.services.DataFinder;
 import org.springframework.test.web.servlet.MvcResult;
+
+import javax.persistence.EntityNotFoundException;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BlogApi.class)
@@ -66,7 +70,16 @@ public class BlogApiTest {
 
         MvcResult mvcResult = mvc.perform(post("/blog/user").contentType(MediaType.APPLICATION_JSON_UTF8).accept(MediaType.APPLICATION_JSON_UTF8).content(content)).andReturn();
 
-        Assert.assertThat(mvcResult.getResponse().getStatus(), is(409));
+        assertThat(mvcResult.getResponse().getStatus(), is(409));
+    }
+
+    @Test
+    public void shouldResponseWithStatusNotFoundWhenTryingToGetNotExistingUser() throws Exception{
+        Mockito.when(finder.getUserData(55L)).thenThrow(new EntityNotFoundException());
+
+        MvcResult mvcResult = mvc.perform(get("/blog/user/55").accept(MediaType.APPLICATION_JSON_UTF8)).andExpect(status().isNotFound()).andReturn();
+
+        assertThat(mvcResult.getResponse().getStatus(), is(404 ));
     }
 
 }
