@@ -26,6 +26,7 @@ import edu.iis.mto.blog.services.BlogService;
 
 import java.util.Optional;
 
+import static edu.iis.mto.blog.domain.model.AccountStatus.CONFIRMED;
 import static edu.iis.mto.blog.domain.model.AccountStatus.NEW;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
@@ -67,7 +68,7 @@ public class BlogManagerTest {
         secondUser.setFirstName("Jakub");
         secondUser.setLastName("Adamiak");
         secondUser.setEmail("jakubadamiak@email.pl");
-        secondUser.setAccountStatus(AccountStatus.CONFIRMED);
+        secondUser.setAccountStatus(CONFIRMED);
         secondUser.setId(2L);
 
         blogPost = new BlogPost();
@@ -93,8 +94,18 @@ public class BlogManagerTest {
         Mockito.when(userRepository.findOne(firstUser.getId())).thenReturn(firstUser);
         Mockito.when(userRepository.findOne(secondUser.getId())).thenReturn(secondUser);
         Mockito.when(blogRepository.findOne(blogPost.getId())).thenReturn(blogPost);
+
+        assertThat(blogService.addLikeToPost(firstUser.getId(), blogPost.getId()), is(true));
+    }
+
+    @Test
+    public void confirmedUserCanLikePosts() {
+        firstUser.setAccountStatus(CONFIRMED);
+        Mockito.when(userRepository.findOne(firstUser.getId())).thenReturn(firstUser);
+        Mockito.when(userRepository.findOne(secondUser.getId())).thenReturn(secondUser);
+        Mockito.when(blogRepository.findOne(blogPost.getId())).thenReturn(blogPost);
         Optional<LikePost> list = Optional.empty();
-        Mockito.when(likeRepository.findByUserAndPost(secondUser, blogPost)).thenReturn(list);
+        Mockito.when(likeRepository.findByUserAndPost(firstUser, blogPost)).thenReturn(list);
 
         assertThat(blogService.addLikeToPost(firstUser.getId(), blogPost.getId()), is(true));
     }
