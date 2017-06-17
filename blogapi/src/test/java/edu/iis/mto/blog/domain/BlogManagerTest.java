@@ -1,5 +1,6 @@
 package edu.iis.mto.blog.domain;
 
+import edu.iis.mto.blog.domain.errors.DomainError;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.repository.BlogPostRepository;
@@ -23,6 +24,7 @@ import edu.iis.mto.blog.domain.repository.UserRepository;
 import edu.iis.mto.blog.mapper.DataMapper;
 import edu.iis.mto.blog.services.BlogService;
 
+import java.time.LocalTime;
 import java.util.Optional;
 
 @RunWith(SpringRunner.class)
@@ -50,18 +52,9 @@ public class BlogManagerTest {
 
     @Before
     public void setUp() {
-        user = new User();
-        user.setFirstName("Zbigniew");
-        user.setEmail("zbigniew@interia.com");
-        user.setAccountStatus(AccountStatus.CONFIRMED);
-        user.setId(30L);
+        user = createUser(30L, "Zbigniew", "", "zbigniew@interia.com", AccountStatus.CONFIRMED);
+        userWhoLikesPost = createUser(31L, "Czesław", "Miłosz", "czeslaw.milosz@domain.com", AccountStatus.CONFIRMED);
 
-        userWhoLikesPost = new User();
-        userWhoLikesPost.setId(31L);
-        userWhoLikesPost.setFirstName("Czesław");
-        userWhoLikesPost.setLastName("Miłosz");
-        userWhoLikesPost.setEmail("czeslaw.milosz@domain.com");
-        userWhoLikesPost.setAccountStatus(AccountStatus.CONFIRMED);
 
         blogPost = new BlogPost();
         blogPost.setUser(user);
@@ -88,5 +81,16 @@ public class BlogManagerTest {
         Assert.assertThat(blogService.addLikeToPost(userWhoLikesPost.getId(), blogPost.getId()), Matchers.equalTo(true));
     }
 
+    
 
+    private User createUser(Long id, String name, String surname, String email, AccountStatus accountStatus) {
+        User newUser = new User();
+        newUser.setId(id);
+        newUser.setFirstName(name);
+        newUser.setLastName(surname);
+        newUser.setEmail(email);
+        newUser.setAccountStatus(accountStatus);
+
+        return newUser;
+    }
 }
