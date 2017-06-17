@@ -1,7 +1,12 @@
 package edu.iis.mto.blog.domain;
 
+import edu.iis.mto.blog.domain.model.BlogPost;
+import edu.iis.mto.blog.domain.model.LikePost;
+import edu.iis.mto.blog.domain.repository.BlogPostRepository;
+import edu.iis.mto.blog.domain.repository.LikePostRepository;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentCaptor;
@@ -18,6 +23,8 @@ import edu.iis.mto.blog.domain.repository.UserRepository;
 import edu.iis.mto.blog.mapper.DataMapper;
 import edu.iis.mto.blog.services.BlogService;
 
+import java.util.Optional;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class BlogManagerTest {
@@ -25,12 +32,43 @@ public class BlogManagerTest {
     @MockBean
     UserRepository userRepository;
 
+    @MockBean
+    BlogPostRepository blogRepository;
+    @MockBean
+    LikePostRepository likeRepository;
+
     @Autowired
     DataMapper dataMapper;
 
     @Autowired
     BlogService blogService;
 
+    User user;
+    User userWhoLikesPost;
+
+    BlogPost blogPost;
+
+    @Before
+    public void setUp(){
+        user = new User();
+        user.setFirstName("Zbigniew");
+        user.setEmail("zbigniew@interia.com");
+        user.setAccountStatus(AccountStatus.CONFIRMED);
+        user.setId(30L);
+
+        userWhoLikesPost =  new User();
+        userWhoLikesPost.setId(31L);
+        userWhoLikesPost.setFirstName("Czesław");
+        userWhoLikesPost.setLastName("Miłosz");
+        userWhoLikesPost.setEmail("czeslaw.milosz@domain.com");
+        userWhoLikesPost.setAccountStatus(AccountStatus.CONFIRMED);
+
+        blogPost = new BlogPost();
+        blogPost.setUser(user);
+        blogPost.setEntry("New post");
+        blogPost.setId(23L);
+
+    }
     @Test
     public void creatingNewUserShouldSetAccountStatusToNEW() {
         blogService.createUser(new UserRequest("John", "Steward", "john@domain.com"));
@@ -39,5 +77,7 @@ public class BlogManagerTest {
         User user = userParam.getValue();
         Assert.assertThat(user.getAccountStatus(), Matchers.equalTo(AccountStatus.NEW));
     }
+
+
 
 }
