@@ -19,6 +19,8 @@ import edu.iis.mto.blog.domain.model.User;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.hasSize;
+import static org.junit.Assert.assertThat;
 
 @RunWith(SpringRunner.class)
 @DataJpaTest
@@ -53,8 +55,8 @@ public class UserRepositoryTest {
         List<User> results = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY, EMPTY, USER_EMAIL);
 
         //then:
-        Assert.assertThat(persistedUser.getEmail(), equalTo(results.get(0).getEmail()));
-        Assert.assertThat(results, Matchers.hasSize(1));
+        assertThat(persistedUser.getEmail(), equalTo(results.get(0).getEmail()));
+        assertThat(results, Matchers.hasSize(1));
     }
 
     @Test
@@ -68,8 +70,8 @@ public class UserRepositoryTest {
         List<User> results = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY, USER_SURNAME, EMPTY);
 
         //then:
-        Assert.assertThat(persistedUser.getLastName(), equalTo(results.get(0).getLastName()));
-        Assert.assertThat(results, Matchers.hasSize(1));
+        assertThat(persistedUser.getLastName(), equalTo(results.get(0).getLastName()));
+        assertThat(results, Matchers.hasSize(1));
     }
 
     @Test
@@ -83,8 +85,20 @@ public class UserRepositoryTest {
         List<User> results = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(FIRST_LETTER, EMPTY, EMPTY);
 
         //then:
-        Assert.assertThat(persistedUser.getLastName(), equalTo(results.get(0).getLastName()));
-        Assert.assertThat(results, Matchers.hasSize(1));
+        assertThat(persistedUser.getLastName(), equalTo(results.get(0).getLastName()));
+        assertThat(results, Matchers.hasSize(1));
+    }
+
+    @Test
+    public void shouldNotFindAnyUser() throws Exception {
+        //given:
+        repository.deleteAll();
+
+        //when:
+        List<User> results = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(EMPTY, EMPTY, EMPTY);
+
+        //then:
+        assertThat(results,hasSize(0));
     }
 
     @Test
@@ -92,7 +106,7 @@ public class UserRepositoryTest {
 
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(1));
+        assertThat(users, Matchers.hasSize(1));
     }
 
     @Test
@@ -100,8 +114,8 @@ public class UserRepositoryTest {
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(user.getFirstName(),user.getLastName(),user.getEmail());
 
-        Assert.assertThat(users, Matchers.hasSize(1));
-        Assert.assertThat(users.get(0).getEmail(), equalTo(persistedUser.getEmail()));
+        assertThat(users, Matchers.hasSize(1));
+        assertThat(users.get(0).getEmail(), equalTo(persistedUser.getEmail()));
     }
 
     @Test
@@ -109,7 +123,7 @@ public class UserRepositoryTest {
 
         User persistedUser = repository.save(user);
 
-        Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
+        assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
 }
