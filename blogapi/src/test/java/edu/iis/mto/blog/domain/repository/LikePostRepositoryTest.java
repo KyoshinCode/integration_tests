@@ -27,6 +27,18 @@ public class LikePostRepositoryTest {
 
     @Before
     public void setUp() {
+        setupAndSaveUserForTests();
+
+        setupAndSaveSamplePost();
+    }
+
+    private void setupAndSaveSamplePost() {
+        LikePost likePost = new LikePost();
+        likePost.setUser(user);
+        likePost.setPost(blogPostRepository.findAll().get(0));
+    }
+
+    private void setupAndSaveUserForTests() {
         user = new User();
 
         user.setAccountStatus(AccountStatus.CONFIRMED);
@@ -37,9 +49,5 @@ public class LikePostRepositoryTest {
         user.setEmail("jankowalski@mail.com");
 
         userRepository.save(user);
-
-        LikePost likePost = new LikePost();
-        likePost.setUser(user);
-        likePost.setPost(blogPostRepository.findAll().get(0));
     }
 }
