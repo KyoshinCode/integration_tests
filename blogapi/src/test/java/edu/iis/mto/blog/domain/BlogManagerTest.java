@@ -1,5 +1,8 @@
 package edu.iis.mto.blog.domain;
 
+import edu.iis.mto.blog.domain.errors.DomainError;
+import edu.iis.mto.blog.domain.model.BlogPost;
+import edu.iis.mto.blog.domain.repository.BlogPostRepository;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,6 +28,9 @@ public class BlogManagerTest {
     @MockBean
     UserRepository userRepository;
 
+    @MockBean
+    BlogPostRepository blogPostRepository;
+
     @Autowired
     DataMapper dataMapper;
 
@@ -40,4 +46,26 @@ public class BlogManagerTest {
         Assert.assertThat(user.getAccountStatus(), Matchers.equalTo(AccountStatus.NEW));
     }
 
+    @Test(expected = DomainError.class)
+    public void shouldNewUserCanNotLikePost() throws Exception {
+        //given:
+        User newUser = new User();
+        newUser.setFirstName("Jan");
+        newUser.setLastName("Kowalski");
+        newUser.setEmail("jankowalski@mail.com");
+        newUser.setAccountStatus(AccountStatus.NEW);
+        newUser.setId(1L);
+
+        BlogPost newBlogPost = new BlogPost();
+        newBlogPost.setUser(newUser);
+        newBlogPost.setEntry("entry");
+        newBlogPost.setId(1L);
+
+        Mockito.when(userRepository.findOne(newUser.getId())).thenReturn(newUser);
+        Mockito.when(blogPostRepository.findOne(newBlogPost.getId())).thenReturn(newBlogPost);
+
+
+        //when:
+        blogService.addLikeToPost(newUser.getId(), newBlogPost.getId());
+    }
 }
