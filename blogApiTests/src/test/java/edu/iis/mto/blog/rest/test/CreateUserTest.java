@@ -7,7 +7,7 @@ import org.junit.Test;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 
-public class CreateUserTest extends FunctionalTests {
+public class    CreateUserTest extends FunctionalTests {
 
     @Test
     public void postFormWithMalformedRequestDataReturnsBadRequest() {
@@ -15,5 +15,22 @@ public class CreateUserTest extends FunctionalTests {
         RestAssured.given().accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
                 .post("/blog/user");
+    }
+
+    @Test public void requiredUniqueEmail() {
+        JSONObject object1  = new JSONObject().put("email", "test3@email.pl");
+        JSONObject object2 = new JSONObject().put("email", "test3@email.pl");
+
+
+        RestAssured.given().accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .body(object1.toString()).expect().log().all()
+                .statusCode(HttpStatus.SC_CREATED).when().post("/blog/user");
+
+        RestAssured.given().accept(ContentType.JSON)
+                .header("Content-Type", "application/json;charset=UTF-8")
+                .body(object2.toString()).expect().log().all().statusCode(HttpStatus.SC_CONFLICT).when()
+                .post("/blog/user");
+
     }
 }
