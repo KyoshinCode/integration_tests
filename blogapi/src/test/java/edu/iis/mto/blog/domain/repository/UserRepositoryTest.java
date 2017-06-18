@@ -103,6 +103,9 @@ public class UserRepositoryTest {
 
     @Test
     public void shouldFindOneUserInRepository() {
+        repository.deleteAll();
+        entityManager.persist(user);
+
 
         List<User> users = repository.findAll();
 
