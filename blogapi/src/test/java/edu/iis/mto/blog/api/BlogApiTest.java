@@ -1,15 +1,20 @@
 package edu.iis.mto.blog.api;
 
+import static org.hamcrest.Matchers.equalTo;
+import static org.junit.Assert.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.Matchers;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -21,6 +26,7 @@ import edu.iis.mto.blog.api.request.UserRequest;
 import edu.iis.mto.blog.dto.Id;
 import edu.iis.mto.blog.services.BlogService;
 import edu.iis.mto.blog.services.DataFinder;
+import org.springframework.test.web.servlet.MvcResult;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BlogApi.class)
@@ -52,6 +58,24 @@ public class BlogApiTest {
 
     private String writeJson(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writer().writeValueAsString(obj);
+    }
+
+    @Test
+    public void shouldReturnHttpStatus409WhenDataIntegrityViolationExceptionIsThrown() throws Exception {
+        //given:
+        UserRequest userRequest = new UserRequest();
+        Mockito.when(blogService.createUser(userRequest)).thenThrow(DataIntegrityViolationException.class);
+
+        //when:
+        MvcResult mvcResult = mvc
+                .perform(post("/blog/user")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .accept(MediaType.APPLICATION_JSON)
+                    .content(writeJson(userRequest)))
+                .andReturn();
+
+        //then:
+        assertThat(mvcResult.getResponse().getStatus(), equalTo(409));
     }
 
 }
