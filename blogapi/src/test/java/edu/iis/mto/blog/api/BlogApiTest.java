@@ -2,6 +2,7 @@ package edu.iis.mto.blog.api;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.junit.Assert.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -27,6 +29,9 @@ import edu.iis.mto.blog.dto.Id;
 import edu.iis.mto.blog.services.BlogService;
 import edu.iis.mto.blog.services.DataFinder;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import javax.persistence.EntityNotFoundException;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BlogApi.class)
@@ -76,6 +81,23 @@ public class BlogApiTest {
 
         //then:
         assertThat(mvcResult.getResponse().getStatus(), equalTo(409));
+    }
+
+    @Test
+    public void shouldReturnHttpStatus404WhenTryingToFetchNonExistingUser() throws Exception {
+        //given:
+        Long ANY_USER_ID = 123L;
+        Mockito.when(finder.getUserData(ANY_USER_ID)).thenThrow(EntityNotFoundException.class);
+
+        //when:
+        MvcResult mvcResult = mvc.perform(
+                    get("/blog/user" + ANY_USER_ID)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andReturn();
+
+        //then:
+        assertThat(mvcResult.getResponse().getStatus(), Matchers.equalTo(404));
     }
 
 }
