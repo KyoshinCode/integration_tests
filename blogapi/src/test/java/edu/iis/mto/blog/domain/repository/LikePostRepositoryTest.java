@@ -4,9 +4,6 @@ import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
-import org.hamcrest.Matcher;
-import org.hamcrest.Matchers;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,21 +30,22 @@ public class LikePostRepositoryTest {
     private UserRepository userRepository;
 
     private User user;
-
+    private BlogPost blogPost;
+    private LikePost likePost;
 
     @Before
     public void setUp() {
         setupAndSaveUserForTests();
 
-        setupAndSaveSamplePost();
+        setupSampleBlogPostAndLikePost();
     }
 
-    private void setupAndSaveSamplePost() {
-        BlogPost blogPost = new BlogPost();
+    private void setupSampleBlogPostAndLikePost() {
+        blogPost = new BlogPost();
         blogPost.setUser(user);
         blogPost.setEntry("entry");
 
-        LikePost likePost = new LikePost();
+        likePost = new LikePost();
         likePost.setUser(user);
         likePost.setPost(blogPost);
     }
@@ -73,5 +71,18 @@ public class LikePostRepositoryTest {
 
         //then:
         assertThat(result, hasSize(0));
+    }
+
+    @Test
+    public void shouldFindOneLikedPost() throws Exception {
+        //given:
+        blogPostRepository.save(blogPost);
+        likePostRepository.save(likePost);
+
+        //when:
+        List<LikePost> result = likePostRepository.findAll();
+
+        //then:
+        assertThat(result,hasSize(1));
     }
 }
