@@ -4,6 +4,7 @@ import edu.iis.mto.blog.domain.model.AccountStatus;
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -84,5 +85,23 @@ public class LikePostRepositoryTest {
 
         //then:
         assertThat(result,hasSize(1));
+    }
+
+    @Test
+    public void shouldProperlyModifyPostData() throws Exception {
+        //given:
+        blogPostRepository.save(blogPost);
+        likePostRepository.save(likePost);
+        List<LikePost> likedPosts = likePostRepository.findAll();
+
+        LikePost likePostAfterEdit = likedPosts.get(0);
+        likePostAfterEdit.getPost().setEntry("new data");
+
+        //when:
+        likePostRepository.save(likePostAfterEdit);
+        LikePost result = likePostRepository.findAll().get(0);
+
+        //then:
+        assertThat(result.getPost().getEntry(), Matchers.equalTo("new data"));
     }
 }
