@@ -32,22 +32,22 @@ public class UserRepositoryTest {
     public void setUp() {
         user = new User();
         user.setFirstName("Jan");
-        user.setEmail("john@domain.com");
+        user.setEmail("john2@domain.com");
         user.setAccountStatus(AccountStatus.NEW);
     }
 
-    @Ignore
     @Test
     public void shouldFindNoUsersIfRepositoryIsEmpty() {
-
+    	repository.deleteAll();
         List<User> users = repository.findAll();
 
         Assert.assertThat(users, Matchers.hasSize(0));
     }
 
-    @Ignore
+    
     @Test
     public void shouldFindOneUsersIfRepositoryContainsOneUserEntity() {
+    	repository.deleteAll();
         User persistedUser = entityManager.persist(user);
         List<User> users = repository.findAll();
 
@@ -55,13 +55,42 @@ public class UserRepositoryTest {
         Assert.assertThat(users.get(0).getEmail(), Matchers.equalTo(persistedUser.getEmail()));
     }
 
-    @Ignore
     @Test
     public void shouldStoreANewUser() {
-
         User persistedUser = repository.save(user);
 
         Assert.assertThat(persistedUser.getId(), Matchers.notNullValue());
     }
 
+    @Test
+    public void findByNotFullFirstName() {
+    	String predicate = "Jo";
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(predicate, "ffffffff", "ffffff");
+    	
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.containsString(predicate));
+    }
+    
+    @Test
+    public void findByFullFirstName() {
+    	String predicate = "John";
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(predicate, "ffffff", "ffffff");
+    	
+    	Assert.assertThat(users.get(0).getFirstName(), Matchers.containsString(predicate));
+    }
+    
+    @Test
+    public void findByNotFullMail() {
+    	String predicate = "n@dom";
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("fffff", "ffffff", predicate);
+    	
+    	Assert.assertThat(users.get(0).getEmail(), Matchers.containsString(predicate));
+    }
+    
+    @Test
+    public void doesntFindUser() {
+    	String predicate = "Olas";
+    	List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase(predicate, "fffff", "fffff");
+    	
+    	Assert.assertThat(users, Matchers.hasSize(0));
+    }
 }
