@@ -38,11 +38,11 @@ public class UserRepositoryTest {
     }
 
     @Test
-    public void shouldFindOneUsersIfRepositoryIsEmpty() {
+    public void shouldNotFindUserIfRepositoryIsEmpty() {
 
         List<User> users = repository.findAll();
 
-        Assert.assertThat(users, Matchers.hasSize(1));
+        Assert.assertThat(users, Matchers.hasSize(0));
     }
 
 
@@ -70,7 +70,7 @@ public class UserRepositoryTest {
 
         List<User> users = repository.findByFirstNameContainingOrLastNameContainingOrEmailContainingAllIgnoreCase("Jan", "", "");
 
-        Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo("Jan"));
+        Assert.assertThat(users.get(0).getFirstName(), Matchers.equalTo(persistedUser.getFirstName()));
     }
 
     @Test
