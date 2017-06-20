@@ -16,4 +16,21 @@ public class CreateUserTest extends FunctionalTests {
                 .body(jsonObj.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED).when()
                 .post("/blog/user");
     }
+
+    @Test
+    public void userShouldHaveUniqueEmail() {
+        JSONObject newUser = new JSONObject().put("email", "test.o2.pl")
+                                            .put("accountStatus", "NEW")
+                                            .put("firstName", "Test")
+                                            .put("lastName", "Test");
+
+        RestAssured.given()
+                .accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(newUser.toString()).expect().log().all().statusCode(HttpStatus.SC_CREATED)
+                .when().post("/blog/user");
+        RestAssured.given()
+                .accept(ContentType.JSON).header("Content-Type", "application/json;charset=UTF-8")
+                .body(newUser.toString()).expect().log().all().statusCode(HttpStatus.SC_CONFLICT)
+                .when().post("/blog/user");
+    }
 }

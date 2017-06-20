@@ -57,4 +57,16 @@ public class User extends BaseEntity {
         this.accountStatus = accountStatus;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (!firstName.equals(user.firstName)) return false;
+        if (!lastName.equals(user.lastName)) return false;
+        if (!email.equals(user.email)) return false;
+        return accountStatus == user.accountStatus;
+    }
 }
