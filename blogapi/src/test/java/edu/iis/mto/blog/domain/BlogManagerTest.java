@@ -45,9 +45,6 @@ public class BlogManagerTest {
     @MockBean
     BlogPostRepository blogPostRepository;
 
-    @MockBean
-    BlogPostRepository blogPostRepository;
-
     @Autowired
     DataMapper dataMapper;
 
