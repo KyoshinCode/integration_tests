@@ -1,5 +1,9 @@
 package edu.iis.mto.blog.domain;
 
+import edu.iis.mto.blog.api.request.PostRequest;
+import edu.iis.mto.blog.domain.errors.DomainError;
+import edu.iis.mto.blog.domain.model.BlogPost;
+import edu.iis.mto.blog.domain.repository.BlogPostRepository;
 import org.hamcrest.Matchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -23,8 +27,10 @@ import edu.iis.mto.blog.domain.repository.UserRepository;
 import edu.iis.mto.blog.mapper.DataMapper;
 import edu.iis.mto.blog.services.BlogService;
 
+
 import static org.mockito.Mockito.times;
 import static org.hamcrest.Matchers.*;
+
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -39,11 +45,16 @@ public class BlogManagerTest {
     @MockBean
     BlogPostRepository blogPostRepository;
 
+    @MockBean
+    BlogPostRepository blogPostRepository;
+
     @Autowired
     DataMapper dataMapper;
 
     @Autowired
     BlogService blogService;
+
+
 
     @Test
     public void creatingNewUserShouldSetAccountStatusToNEW() {
@@ -87,6 +98,7 @@ public class BlogManagerTest {
         userParam.getAllValues().get(1).setAccountStatus(AccountStatus.NEW);
         Mockito.verify(userRepository, times(2)).save(userParam.capture());
         blogService.createPost(userParam.getAllValues().get(1).getId(), new PostRequest());
+
 
         ArgumentCaptor<BlogPost> blogPostParam = ArgumentCaptor.forClass(BlogPost.class);
         Mockito.verify(blogPostRepository, times(1)).save(blogPostParam.capture());

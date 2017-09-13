@@ -4,6 +4,7 @@ import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.http.ContentType;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
+
 import org.junit.Test;
 
 public class AddLikeTest {

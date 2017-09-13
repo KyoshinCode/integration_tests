@@ -1,6 +1,7 @@
 package edu.iis.mto.blog.domain.repository;
 
 import edu.iis.mto.blog.domain.model.AccountStatus;
+
 import edu.iis.mto.blog.domain.model.BlogPost;
 import edu.iis.mto.blog.domain.model.LikePost;
 import edu.iis.mto.blog.domain.model.User;
@@ -17,15 +18,18 @@ import java.util.List;
 import java.util.Optional;
 
 
+
 @RunWith(SpringRunner.class)
 @DataJpaTest
 public class LikePostRepositoryTest {
+
 
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private BlogPostRepository blogPostRepository;
+
 
     @Autowired
     private LikePostRepository likePostRepository;
@@ -40,10 +44,12 @@ public class LikePostRepositoryTest {
         List<User> users = userRepository.findAll();
         BlogPost blogPost = new BlogPost();
         blogPost.setEntry("Test for test");
+
         blogPost.setUser(users.get(0));
         blogPostRepository.save(blogPost);
 
         List<BlogPost> blogPosts = blogPostRepository.findAll();
+
 
         likePost = new LikePost();
         likePost.setPost(blogPosts.get(0));
@@ -82,6 +88,7 @@ public class LikePostRepositoryTest {
         Assert.assertThat(foundLikePosts.get(),Matchers.equalTo(savedLikePost));
         foundLikePosts.get().setUser(newUser);
         Assert.assertThat(foundLikePosts.get().getUser(),Matchers.equalTo(newUser));
+
 
     }
 }
